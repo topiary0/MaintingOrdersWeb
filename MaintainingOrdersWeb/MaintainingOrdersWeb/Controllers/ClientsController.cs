@@ -1,11 +1,12 @@
-﻿using MaintainingOrdersWeb.Models;
+﻿using MaintainingOrdersWeb.Infrastructure;
+using MaintainingOrdersWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MaintainingOrdersWeb.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = AppRoles.SalesAndFinanceRoles)]
     public class ClientsController : Controller
     {
         private readonly MyDbContext _context;
