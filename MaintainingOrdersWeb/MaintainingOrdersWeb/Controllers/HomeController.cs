@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Security.Claims;
 
 namespace MaintainingOrdersWeb.Controllers
 {
@@ -23,18 +22,14 @@ namespace MaintainingOrdersWeb.Controllers
         {
             var user = await _context.Users
                 .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Login == User.Identity.Name);
-            ViewBag.UserName = user?.FullName ?? User.Identity.Name;
+                .FirstOrDefaultAsync(u => u.Login == User.Identity!.Name);
+            ViewBag.UserName = user?.FullName ?? User.Identity?.Name;
 
-            // Общие показатели
             ViewBag.TotalProducts = await _context.Products.CountAsync();
             ViewBag.TotalClients = await _context.Clients.CountAsync();
-
-            // Директор
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
-            ViewBag.TotalRevenue = await _context.Orders.SumAsync(o => o.TotalPrice);
+            ViewBag.TotalRevenue = await _context.Orders.Select(o => o.TotalPrice).DefaultIfEmpty(0m).SumAsync();
 
-            // Последние 5 заказов
             ViewBag.RecentOrders = await _context.Orders
                 .Include(o => o.Client)
                 .Include(o => o.Status)
@@ -42,36 +37,48 @@ namespace MaintainingOrdersWeb.Controllers
                 .Take(5)
                 .ToListAsync();
 
-            // Активные поставки (Ожидание или В пути)
-            ViewBag.ActiveShipments = await _context.Shipments
-                .Include(s => s.Suppliers)
-                .Include(s => s.Statussh)
-                .Where(s => s.Statussh.StatusName == "Ожидание" || s.Statussh.StatusName == "В пути")
+            ViewBag.LowStockProducts = await _context.Products
+                .OrderBy(p => p.Remains)
+                .Take(5)
                 .ToListAsync();
 
-            // Заказы на сегодня
-            var today = DateOnly.FromDateTime(DateTime.Today);
             ViewBag.TodaysOrders = await _context.Orders
                 .Include(o => o.Client)
                 .Include(o => o.Status)
-                .Where(o => o.OrderDate == today)
+                .Where(o => o.OrderDate == DateOnly.FromDateTime(DateTime.Today))
                 .ToListAsync();
 
-            // Заказы, ожидающие сборки (например, статус "Новый" или не "Собран")
-            ViewBag.PendingOrders = await _context.Orders
-                .Include(o => o.Client)
-                .Include(o => o.Status)
-                .Where(o => o.Status.StatusName != "Собран" && o.Status.StatusName != "Выполнен")
-                .OrderBy(o => o.OrderDate)
+            ViewBag.ActiveShipments = await _context.Shipments
+                .Include(s => s.Suppliers)
+                .Include(s => s.Statussh)
+                .OrderByDescending(s => s.ShipmentDate)
+                .Take(5)
+                .ToListAsync();
+
+            var startWeek = DateOnly.FromDateTime(DateTime.Today.AddDays(-6));
+            ViewBag.WeeklyTopDay = await _context.Orders
+                .Where(o => o.OrderDate >= startWeek)
+                .GroupBy(o => o.OrderDate)
+                .Select(g => new { Date = g.Key, Revenue = g.Sum(x => x.TotalPrice) })
+                .OrderByDescending(x => x.Revenue)
+                .FirstOrDefaultAsync();
+
+            var quarterStartMonth = ((DateTime.Today.Month - 1) / 3) * 3 + 1;
+            var quarterStart = new DateOnly(DateTime.Today.Year, quarterStartMonth, 1);
+            ViewBag.QuarterDeals = await _context.Orders.CountAsync(o => o.OrderDate >= quarterStart);
+
+            ViewBag.TopManagers = await _context.Orders
+                .Include(o => o.User)
+                .GroupBy(o => o.User.FullName)
+                .Select(g => new { Manager = g.Key, Revenue = g.Sum(x => x.TotalPrice), Deals = g.Count() })
+                .OrderByDescending(x => x.Revenue)
+                .Take(5)
                 .ToListAsync();
 
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

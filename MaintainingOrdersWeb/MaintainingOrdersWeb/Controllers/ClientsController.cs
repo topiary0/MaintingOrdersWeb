@@ -34,6 +34,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Clients/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
             return View();
@@ -42,6 +43,7 @@ namespace MaintainingOrdersWeb.Controllers
         // POST: Clients/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Create([Bind("ClientId,Name,Address,Phone,ContactPerson")] Client client)
         {
             if (ModelState.IsValid)
@@ -63,6 +65,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Clients/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -76,6 +79,7 @@ namespace MaintainingOrdersWeb.Controllers
         // POST: Clients/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int id, [Bind("ClientId,Name,Address,Phone,ContactPerson")] Client client)
         {
             if (id != client.ClientId) return NotFound();
@@ -106,6 +110,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Clients/Delete/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -120,6 +125,7 @@ namespace MaintainingOrdersWeb.Controllers
         // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var client = await _context.Clients.FindAsync(id);

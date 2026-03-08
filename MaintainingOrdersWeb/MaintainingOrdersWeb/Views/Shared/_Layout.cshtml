@@ -48,6 +48,10 @@
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></li>
                         }
+                        if (User.IsInRole("Директор") || User.IsInRole("Бухгалтер"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="Index">Отчеты</a></li>
+                        }
                     }
                 </ul>
                 @if (User.Identity?.IsAuthenticated == true)

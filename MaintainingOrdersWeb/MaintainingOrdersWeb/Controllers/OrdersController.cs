@@ -44,6 +44,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
             ViewData["StatusId"] = new SelectList(_context.OrderStatuses, "StatusId", "StatusName");
@@ -56,6 +57,7 @@ namespace MaintainingOrdersWeb.Controllers
         // POST: Orders/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Create([Bind("OrderId,OrderDate,StatusId,TotalPrice,DeliveryAddress,ClientId,UserId,MethodId")] Order order)
         {
             // Убираем возможные ошибки навигационных свойств
@@ -89,6 +91,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -106,6 +109,7 @@ namespace MaintainingOrdersWeb.Controllers
         // POST: Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderDate,StatusId,TotalPrice,DeliveryAddress,ClientId,UserId,MethodId")] Order order)
         {
             if (id != order.OrderId) return NotFound();
@@ -144,6 +148,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders/Delete/5
+        [Authorize(Roles = "Директор")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -162,12 +167,37 @@ namespace MaintainingOrdersWeb.Controllers
         // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Директор")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var order = await _context.Orders.FindAsync(id);
             if (order != null)
                 _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Сотрудник,Директор")]
+        public async Task<IActionResult> MarkAsPacked(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var packedStatus = await _context.OrderStatuses
+                .FirstOrDefaultAsync(s => s.StatusName.ToLower().Contains("собран"));
+            if (packedStatus != null)
+            {
+                order.StatusId = packedStatus.StatusId;
+                _context.Update(order);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

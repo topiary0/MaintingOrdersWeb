@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Отчеты";
+}
+
+<h1>Финансовые и управленческие отчеты</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="metric-card"><div class="metric-title">Сделок за квартал</div><div class="metric-value">@ViewBag.QuarterOrders</div></div></div>
+    <div class="col-md-4"><div class="metric-card"><div class="metric-title">Выручка за квартал</div><div class="metric-value">@(ViewBag.QuarterRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
+    <div class="col-md-4"><div class="metric-card"><div class="metric-title">Ответственный</div><div class="metric-value">@User.Identity?.Name</div></div></div>
+</div>
+
+<div class="glass-card p-3 mb-4">
+    <h3>Эффективность менеджеров</h3>
+    <div class="table-responsive">
+        <table class="table table-modern">
+            <thead><tr><th>Менеджер</th><th>Сделки</th><th>Выручка</th></tr></thead>
+            <tbody>
+            @foreach (var row in ViewBag.ManagerStats)
+            {
+                <tr><td>@row.Manager</td><td>@row.Deals</td><td>@row.Revenue.ToString("N2") ₽</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="glass-card p-3">
+    <h3>Топ товаров по продажам</h3>
+    <div class="table-responsive">
+        <table class="table table-modern">
+            <thead><tr><th>Товар</th><th>Кол-во</th><th>Сумма продаж</th></tr></thead>
+            <tbody>
+            @foreach (var row in ViewBag.TopProducts)
+            {
+                <tr><td>@row.Product</td><td>@row.Qty</td><td>@row.Sales.ToString("N2") ₽</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
