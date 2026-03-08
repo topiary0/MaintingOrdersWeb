@@ -17,14 +17,39 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? orderId, int? clientId, DateOnly? orderDate)
         {
-            var orders = _context.Orders
+            var ordersQuery = _context.Orders
                 .Include(o => o.Status)
                 .Include(o => o.Client)
                 .Include(o => o.User)
-                .Include(o => o.Method);
-            return View(await orders.ToListAsync());
+                .Include(o => o.Method)
+                .AsQueryable();
+
+            if (orderId.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.OrderId == orderId.Value);
+            }
+
+            if (clientId.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.ClientId == clientId.Value);
+            }
+
+            if (orderDate.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.OrderDate == orderDate.Value);
+            }
+
+            ViewBag.FilterOrderId = orderId;
+            ViewBag.FilterClientId = clientId;
+            ViewBag.FilterOrderDate = orderDate;
+            ViewBag.Clients = await _context.Clients
+                .OrderBy(c => c.Name)
+                .Select(c => new { c.ClientId, c.Name })
+                .ToListAsync();
+
+            return View(await ordersQuery.OrderByDescending(o => o.OrderDate).ToListAsync());
         }
 
         // GET: Orders/Details/5

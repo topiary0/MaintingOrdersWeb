@@ -25,6 +25,13 @@
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Товары</div><div class="metric-value">@ViewBag.TotalProducts</div></div></div>
         </div>
 
+        <div class="row g-2 mb-3">
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Управление заказами</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Shipment" asp-action="Index">Управление поставками</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Clients" asp-action="Index">База клиентов</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Каталог товаров</a></div>
+        </div>
+
         <div style="max-width: 700px; height: 190px;">
             <canvas id="directorChart"></canvas>
         </div>
@@ -124,7 +131,15 @@
         const commonOptions = {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } }
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } },
+                tooltip: { backgroundColor: '#1F2937' }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkipPadding: 12 } },
+                y: { grid: { color: 'rgba(148,163,184,0.18)' }, beginAtZero: true }
+            }
         };
 
         @if (User.IsInRole("Директор"))
@@ -134,7 +149,7 @@
                 type: 'line',
                 data: {
                     labels: monthLabels,
-                    datasets: [{ label: 'Выручка, ₽', data: monthRevenue, borderColor: '#1976D2', tension: 0.3, fill: false }]
+                    datasets: [{ label: 'Выручка, ₽', data: monthRevenue, borderColor: '#1976D2', backgroundColor: 'rgba(25,118,210,0.12)', pointRadius: 2, pointHoverRadius: 4, tension: 0.35, fill: true }]
                 },
                 options: commonOptions
             });
@@ -150,7 +165,7 @@
                 type: 'doughnut',
                 data: {
                     labels: managerLabels,
-                    datasets: [{ data: managerCounts, backgroundColor: ['#1565C0', '#2E7D32', '#F9A825', '#8E24AA', '#EF6C00'] }]
+                    datasets: [{ data: managerCounts, borderWidth: 1, backgroundColor: ['#1565C0', '#2E7D32', '#F9A825', '#8E24AA', '#EF6C00'] }]
                 },
                 options: commonOptions
             });
@@ -166,7 +181,7 @@
                 type: 'bar',
                 data: {
                     labels: logisticLabels,
-                    datasets: [{ label: 'Заказы по статусам', data: logisticCounts, backgroundColor: '#6A1B9A' }]
+                    datasets: [{ label: 'Заказы по статусам', data: logisticCounts, backgroundColor: 'rgba(106,27,154,0.75)', borderRadius: 6, maxBarThickness: 28 }]
                 },
                 options: commonOptions
             });
@@ -182,7 +197,7 @@
                 type: 'bar',
                 data: {
                     labels: employeeLabels,
-                    datasets: [{ label: 'Остаток', data: employeeCounts, backgroundColor: '#EF6C00' }]
+                    datasets: [{ label: 'Остаток', data: employeeCounts, backgroundColor: 'rgba(239,108,0,0.75)', borderRadius: 6, maxBarThickness: 28 }]
                 },
                 options: commonOptions
             });
@@ -197,8 +212,8 @@
                 data: {
                     labels: monthLabels,
                     datasets: [
-                        { label: 'Выручка, ₽', data: monthRevenue, backgroundColor: '#2E7D32' },
-                        { label: 'Заказы', data: monthOrders, backgroundColor: '#1565C0' }
+                        { label: 'Выручка, ₽', data: monthRevenue, backgroundColor: 'rgba(46,125,50,0.75)', borderRadius: 6, maxBarThickness: 24 },
+                        { label: 'Заказы', data: monthOrders, backgroundColor: 'rgba(21,101,192,0.75)', borderRadius: 6, maxBarThickness: 24 }
                     ]
                 },
                 options: commonOptions
