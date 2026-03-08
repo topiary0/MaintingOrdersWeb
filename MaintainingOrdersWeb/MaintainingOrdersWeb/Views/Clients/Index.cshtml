@@ -12,7 +12,7 @@
         <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать нового клиента</a>
     </p>
 }
-<table class="table">
+<table class="table table-modern">
     <thead>
         <tr>
             <th>Наименование</th>
@@ -32,10 +32,10 @@
             <td>
                 @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                 {
-                    <a asp-action="Edit" asp-route-id="@item.ClientId" style="color: #1976D2;">Редактировать</a> @:|
-                    <a asp-action="Delete" asp-route-id="@item.ClientId" style="color: #FF6D00;">Удалить</a> @:|
+                    <a asp-action="Edit" asp-route-id="@item.ClientId" style="color: #1976D2;" class="btn btn-outline-primary btn-sm">Редактировать</a>
+                    <a asp-action="Delete" asp-route-id="@item.ClientId" style="color: #FF6D00;" class="btn btn-outline-danger btn-sm">Удалить</a>
                 }
-                <a asp-action="Details" asp-route-id="@item.ClientId" style="color: #1976D2;">Детали</a>
+                <a asp-action="Details" asp-route-id="@item.ClientId" style="color: #1976D2;" class="btn btn-outline-info btn-sm">Детали</a>
             </td>
         </tr>
 }

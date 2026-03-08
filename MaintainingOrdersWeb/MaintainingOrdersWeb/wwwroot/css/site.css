@@ -60,3 +60,83 @@ body {
   color: #0a3f98;
   transform: translateY(-1px);
 }
+
+/* CRUD pages visual refresh */
+main h1 {
+  color: #114a9f !important;
+  font-weight: 700;
+  margin-bottom: .75rem;
+}
+
+main h3 {
+  color: #1a5bb8;
+}
+
+main hr {
+  border-color: #cfe0ff;
+  opacity: 1;
+}
+
+main .row > .col-md-4,
+main .row > .col-md-6,
+main .row > .col-md-8,
+main .row > .col-md-10,
+main .row > .col-sm-10,
+main .row > .col-sm-2,
+main .row > .col {
+  padding-top: .1rem;
+}
+
+main form,
+main dl.row,
+main table.table,
+main .table-responsive,
+main > div:has(> dl.row) {
+  background: rgba(255,255,255,.9);
+  border: 1px solid #d5e4ff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(21, 74, 161, 0.08);
+}
+
+main form,
+main dl.row,
+main .table-responsive {
+  padding: 1rem;
+}
+
+main .table {
+  margin-bottom: 0;
+}
+
+main td a.btn,
+main p a.btn,
+main div a.btn {
+  margin-right: .35rem;
+  margin-bottom: .35rem;
+}
+
+main input[type="submit"],
+main button[type="submit"] {
+  border-radius: 10px;
+  padding: .45rem .85rem;
+}
+
+main .btn {
+  border-radius: 10px;
+}
+
+main .btn-outline-primary { border-color: #1b62c3; color: #1b62c3; }
+main .btn-outline-primary:hover { background: #1b62c3; color: #fff; }
+main .btn-outline-info { border-color: #1f8aa8; color: #1f8aa8; }
+main .btn-outline-info:hover { background: #1f8aa8; color: #fff; }
+main .btn-outline-danger { border-color: #cf3f57; color: #cf3f57; }
+main .btn-outline-danger:hover { background: #cf3f57; color: #fff; }
+
+main dt {
+  color: #315a97;
+  font-weight: 700;
+}
+
+main dd {
+  margin-bottom: .65rem;
+}

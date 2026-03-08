@@ -12,7 +12,7 @@
         <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать нового поставщика</a>
     </p>
 }
-<table class="table">
+<table class="table table-modern">
     <thead>
         <tr>
             <th>Наименование</th>
@@ -31,10 +31,10 @@
                 <td>
                     @if (User.IsInRole("Директор"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.SuppliersId">Редактировать</a> @:|
-                        <a asp-action="Delete" asp-route-id="@item.SuppliersId">Удалить</a> @:|
+                        <a asp-action="Edit" asp-route-id="@item.SuppliersId" class="btn btn-outline-primary btn-sm">Редактировать</a>
+                        <a asp-action="Delete" asp-route-id="@item.SuppliersId" class="btn btn-outline-danger btn-sm">Удалить</a>
                     }
-                    <a asp-action="Details" asp-route-id="@item.SuppliersId">Детали</a>
+                    <a asp-action="Details" asp-route-id="@item.SuppliersId" class="btn btn-outline-info btn-sm">Детали</a>
                 </td>
             </tr>
         }

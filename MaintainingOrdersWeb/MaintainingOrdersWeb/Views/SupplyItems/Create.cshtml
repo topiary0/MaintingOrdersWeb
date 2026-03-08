@@ -11,22 +11,22 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="ShipmentId" class="control-label">Поставка (ID)</label>
                 <select asp-for="ShipmentId" class="form-control" asp-items="ViewBag.ShipmentId"></select>
                 <span asp-validation-for="ShipmentId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="ProductId" class="control-label">Товар</label>
                 <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
                 <span asp-validation-for="ProductId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Quantity" class="control-label">Количество</label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="PriceAtShipment" class="control-label">Цена в поставке</label>
                 <input asp-for="PriceAtShipment" class="form-control" step="0.01" lang="en" inputmode="decimal" placeholder="0.00" id="PriceAtShipment" />
                 <span asp-validation-for="PriceAtShipment" class="text-danger"></span>

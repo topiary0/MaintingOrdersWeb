@@ -12,7 +12,7 @@
         <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Добавить позицию</a>
     </p>
 }
-<table class="table">
+<table class="table table-modern">
     <thead>
         <tr>
             <th>Заказ</th>
@@ -33,13 +33,13 @@
                 <td>
                     @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                     {
-                        <a asp-action="Edit" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId">Редактировать</a> @:|
+                        <a asp-action="Edit" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="btn btn-outline-primary btn-sm">Редактировать</a>
                     }
                     @if (User.IsInRole("Директор"))
                     {
-                        <a asp-action="Delete" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId">Удалить</a> @:|
+                        <a asp-action="Delete" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="btn btn-outline-danger btn-sm">Удалить</a>
                     }
-                    <a asp-action="Details" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId">Детали</a>
+                    <a asp-action="Details" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="btn btn-outline-info btn-sm">Детали</a>
                 </td>
             </tr>
         }

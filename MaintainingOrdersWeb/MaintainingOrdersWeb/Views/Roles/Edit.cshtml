@@ -12,7 +12,7 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="RoleId" />
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="RoleName" class="control-label">Название роли</label>
                 <input asp-for="RoleName" class="form-control" />
                 <span asp-validation-for="RoleName" class="text-danger"></span>
