@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MaintainingOrdersWeb.Infrastructure;
 using MaintainingOrdersWeb.Models;
 
 namespace MaintainingOrdersWeb.Controllers
 {
-    [Authorize] // Доступ только авторизованным пользователям
+    [Authorize(Roles = AppRoles.Director)]
     public class RolesController : Controller
     {
         private readonly MyDbContext _context;

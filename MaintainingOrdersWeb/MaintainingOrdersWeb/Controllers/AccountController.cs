@@ -1,6 +1,7 @@
 ﻿using MaintainingOrdersWeb.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -18,12 +19,14 @@ namespace MyWebApp.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(string login, string password)
         {
             if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
@@ -54,6 +57,13 @@ namespace MyWebApp.Controllers
             }
 
             ViewBag.Error = "Неверный логин или пароль";
+            return View();
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
             return View();
         }
 
