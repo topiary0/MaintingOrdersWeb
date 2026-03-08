@@ -1,3 +1,4 @@
+@using System.Text.Json
 @{
     ViewData["Title"] = "Главная";
 }
@@ -12,17 +13,12 @@
         <h3>Дашборд директора</h3>
         <div class="row g-3 mt-1">
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
-            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Сделок за квартал</div><div class="metric-value">@ViewBag.QuarterDeals</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Клиенты</div><div class="metric-value">@ViewBag.TotalClients</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Товары</div><div class="metric-value">@ViewBag.TotalProducts</div></div></div>
         </div>
         <div class="mt-3">
-            @if (ViewBag.WeeklyTopDay != null)
-            {
-                <p class="mb-2"><strong>Самый прибыльный день недели:</strong> @ViewBag.WeeklyTopDay.Date, @ViewBag.WeeklyTopDay.Revenue.ToString("N2") ₽</p>
-            }
-            <a class="btn btn-primary btn-sm" asp-controller="Reports" asp-action="Index">Финансовые отчеты</a>
-            <a class="btn btn-outline-primary btn-sm" asp-controller="Users" asp-action="Index">Пользователи</a>
+            <canvas id="directorChart" height="100"></canvas>
         </div>
     </div>
 }
@@ -30,13 +26,15 @@
 @if (User.IsInRole("Менеджер"))
 {
     <div class="glass-card p-3 mb-4">
-        <h3>Дашборд менеджера по продажам</h3>
+        <h3>Дашборд менеджера</h3>
         <div class="row g-3 mt-1">
             <div class="col-md-4"><a class="quick-tile" asp-controller="Clients" asp-action="Create">Добавить клиента</a></div>
             <div class="col-md-4"><a class="quick-tile" asp-controller="Orders" asp-action="Create">Создать заказ</a></div>
-            <div class="col-md-4"><a class="quick-tile" asp-controller="Products" asp-action="Index">Проверить остатки</a></div>
+            <div class="col-md-4"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Позиции заказов</a></div>
         </div>
-        <p class="text-muted mt-3 mb-0">Автоматизируйте расчёт заказа и передавайте его на склад без звонков.</p>
+        <div class="mt-3">
+            <canvas id="managerChart" height="100"></canvas>
+        </div>
     </div>
 }
 
@@ -46,20 +44,10 @@
         <h3>Дашборд логиста</h3>
         <div class="d-flex gap-2 flex-wrap mb-3">
             <a class="btn btn-primary btn-sm" asp-controller="Shipment" asp-action="Index">Поставки</a>
-            <a class="btn btn-outline-primary btn-sm" asp-controller="DeliveryMethods" asp-action="Index">Варианты доставки</a>
-            <a class="btn btn-outline-primary btn-sm" asp-controller="Orders" asp-action="Index">Заказы к доставке</a>
+            <a class="btn btn-outline-primary btn-sm" asp-controller="SupplyItems" asp-action="Index">Составы поставок</a>
+            <a class="btn btn-outline-primary btn-sm" asp-controller="DeliveryMethods" asp-action="Index">Способы доставки</a>
         </div>
-        <div class="table-responsive">
-            <table class="table table-modern">
-                <thead><tr><th>Дата</th><th>Поставщик</th><th>Статус</th></tr></thead>
-                <tbody>
-                @foreach (var shipment in ViewBag.ActiveShipments)
-                {
-                    <tr><td>@shipment.ShipmentDate</td><td>@shipment.Suppliers?.SupplierName</td><td>@shipment.Statussh?.StatusName</td></tr>
-                }
-                </tbody>
-            </table>
-        </div>
+        <canvas id="logisticChart" height="100"></canvas>
     </div>
 }
 
@@ -67,18 +55,11 @@
 {
     <div class="glass-card p-3 mb-4">
         <h3>Дашборд склада</h3>
-        <p class="mb-2">План отгрузок на сегодня: <strong>@((ViewBag.TodaysOrders as IEnumerable<dynamic>)?.Count() ?? 0)</strong></p>
         <div class="d-flex gap-2 flex-wrap mb-3">
             <a class="btn btn-primary btn-sm" asp-controller="Orders" asp-action="Index">Заказы на сборку</a>
             <a class="btn btn-outline-primary btn-sm" asp-controller="OrderItems" asp-action="Index">Состав заказов</a>
         </div>
-        <h6>Товары с минимальными остатками</h6>
-        <ul class="mb-0">
-            @foreach (var p in ViewBag.LowStockProducts)
-            {
-                <li>@p.Name — остаток: @p.Remains</li>
-            }
-        </ul>
+        <canvas id="employeeChart" height="100"></canvas>
     </div>
 }
 
@@ -91,9 +72,80 @@
             <div class="col-md-4"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
             <div class="col-md-4"><div class="metric-card"><div class="metric-title">Клиенты</div><div class="metric-value">@ViewBag.TotalClients</div></div></div>
         </div>
-        <div class="mt-3">
-            <a class="btn btn-primary btn-sm" asp-controller="Reports" asp-action="Index">Сформировать отчеты</a>
-            <a class="btn btn-outline-primary btn-sm" asp-controller="Orders" asp-action="Index">Реестр заказов</a>
+        <div class="mt-3 mb-2">
+            <a class="btn btn-primary btn-sm" asp-controller="Reports" asp-action="Index">Отчетность и PDF</a>
         </div>
+        <canvas id="accountantChart" height="100"></canvas>
     </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const monthLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.MonthLabels));
+        const monthRevenue = @Html.Raw(JsonSerializer.Serialize(ViewBag.MonthRevenue));
+        const monthOrders = @Html.Raw(JsonSerializer.Serialize(ViewBag.MonthOrders));
+
+        @if (User.IsInRole("Директор"))
+        {
+            <text>
+            new Chart(document.getElementById('directorChart'), {
+                type: 'line',
+                data: { labels: monthLabels, datasets: [{ label: 'Выручка, ₽', data: monthRevenue, borderColor: '#1976D2', tension: 0.3 }] }
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Менеджер"))
+        {
+            <text>
+            const managerLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.ManagerStatusLabels));
+            const managerCounts = @Html.Raw(JsonSerializer.Serialize(ViewBag.ManagerStatusCounts));
+            new Chart(document.getElementById('managerChart'), {
+                type: 'doughnut',
+                data: { labels: managerLabels, datasets: [{ data: managerCounts, backgroundColor: ['#1565C0', '#2E7D32', '#F9A825', '#8E24AA', '#EF6C00'] }] }
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Логист"))
+        {
+            <text>
+            const logisticLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.ShipmentStatusLabels));
+            const logisticCounts = @Html.Raw(JsonSerializer.Serialize(ViewBag.ShipmentStatusCounts));
+            new Chart(document.getElementById('logisticChart'), {
+                type: 'bar',
+                data: { labels: logisticLabels, datasets: [{ label: 'Количество поставок', data: logisticCounts, backgroundColor: '#6A1B9A' }] }
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Сотрудник"))
+        {
+            <text>
+            const employeeLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.LowStockLabels));
+            const employeeCounts = @Html.Raw(JsonSerializer.Serialize(ViewBag.LowStockCounts));
+            new Chart(document.getElementById('employeeChart'), {
+                type: 'bar',
+                data: { labels: employeeLabels, datasets: [{ label: 'Остаток', data: employeeCounts, backgroundColor: '#EF6C00' }] }
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Бухгалтер"))
+        {
+            <text>
+            new Chart(document.getElementById('accountantChart'), {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        { label: 'Выручка, ₽', data: monthRevenue, backgroundColor: '#2E7D32' },
+                        { label: 'Количество заказов', data: monthOrders, backgroundColor: '#1565C0' }
+                    ]
+                }
+            });
+            </text>
+        }
+    </script>
 }

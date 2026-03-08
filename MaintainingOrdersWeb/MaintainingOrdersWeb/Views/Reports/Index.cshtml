@@ -10,6 +10,14 @@
     <div class="col-md-4"><div class="metric-card"><div class="metric-title">Ответственный</div><div class="metric-value">@User.Identity?.Name</div></div></div>
 </div>
 
+@if (User.IsInRole("Бухгалтер"))
+{
+    <form asp-action="ExportAccountingPdf" method="post" class="mb-3">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Сформировать отчет в PDF</button>
+    </form>
+}
+
 <div class="glass-card p-3 mb-4">
     <h3>Эффективность менеджеров</h3>
     <div class="table-responsive">

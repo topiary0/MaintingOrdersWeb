@@ -1,7 +1,9 @@
+using MaintainingOrdersWeb.Documents;
 using MaintainingOrdersWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
 
 namespace MaintainingOrdersWeb.Controllers
 {
@@ -41,6 +43,26 @@ namespace MaintainingOrdersWeb.Controllers
                 .ToListAsync();
 
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Бухгалтер")]
+        public async Task<IActionResult> ExportAccountingPdf()
+        {
+            var quarterStartMonth = ((DateTime.Today.Month - 1) / 3) * 3 + 1;
+            var quarterStart = new DateOnly(DateTime.Today.Year, quarterStartMonth, 1);
+
+            var quarterOrders = await _context.Orders.CountAsync(o => o.OrderDate >= quarterStart);
+            var quarterRevenue = await _context.Orders
+                .Where(o => o.OrderDate >= quarterStart)
+                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
+            var clientsCount = await _context.Clients.CountAsync();
+
+            var document = new AccountingReportDocument(quarterOrders, quarterRevenue, clientsCount, DateTime.Now);
+            var pdfBytes = document.GeneratePdf();
+
+            return File(pdfBytes, "application/pdf", $"AccountingReport_{DateTime.Now:yyyyMMdd_HHmm}.pdf");
         }
     }
 }

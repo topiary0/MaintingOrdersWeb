@@ -38,6 +38,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
             ViewData["OrderId"] = new SelectList(_context.Orders, "OrderId", "OrderId"); // или можно отображать дату+клиента
@@ -46,6 +47,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: OrderItems/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,ProductId,Quantity,PriceAtOrder")] OrderItem orderItem)
@@ -82,6 +84,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems/Edit?orderId=5&productId=3
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int orderId, int productId)
         {
             var orderItem = await _context.OrderItems
@@ -94,6 +97,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: OrderItems/Edit?orderId=5&productId=3
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int orderId, int productId, [Bind("OrderId,ProductId,Quantity,PriceAtOrder")] OrderItem orderItem)
@@ -139,6 +143,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems/Delete?orderId=5&productId=3
+        [Authorize(Roles = "Директор")]
         public async Task<IActionResult> Delete(int orderId, int productId)
         {
             var orderItem = await _context.OrderItems
@@ -151,6 +156,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: OrderItems/Delete?orderId=5&productId=3
+        [Authorize(Roles = "Директор")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int orderId, int productId)
