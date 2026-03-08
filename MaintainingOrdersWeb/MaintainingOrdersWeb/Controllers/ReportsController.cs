@@ -23,9 +23,7 @@ namespace MaintainingOrdersWeb.Controllers
             ViewBag.QuarterOrders = await _context.Orders.CountAsync(o => o.OrderDate >= quarterStart);
             ViewBag.QuarterRevenue = await _context.Orders
                 .Where(o => o.OrderDate >= quarterStart)
-                .Select(o => o.TotalPrice)
-                .DefaultIfEmpty(0m)
-                .SumAsync();
+                .SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
 
             ViewBag.ManagerStats = await _context.Orders
                 .Include(o => o.User)

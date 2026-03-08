@@ -28,7 +28,7 @@ namespace MaintainingOrdersWeb.Controllers
             ViewBag.TotalProducts = await _context.Products.CountAsync();
             ViewBag.TotalClients = await _context.Clients.CountAsync();
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
-            ViewBag.TotalRevenue = await _context.Orders.Select(o => o.TotalPrice).DefaultIfEmpty(0m).SumAsync();
+            ViewBag.TotalRevenue = await _context.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
 
             ViewBag.RecentOrders = await _context.Orders
                 .Include(o => o.Client)
