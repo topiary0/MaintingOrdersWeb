@@ -1,0 +1,30 @@
+﻿@model MaintainingOrdersWeb.Models.Shipment
+
+@{
+    ViewData["Title"] = "Детали поставки";
+}
+
+<h1 style="color: #1976D2;">Детали поставки</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Дата поставки</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.ShipmentDate)</dd>
+        <dt class="col-sm-2">Статус (текст)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Status)</dd>
+        <dt class="col-sm-2">Поставщик</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Suppliers.SupplierName)</dd>
+        <dt class="col-sm-2">Менеджер</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.User.FullName)</dd>
+        <dt class="col-sm-2">Статус поставки</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Statussh.StatusName)</dd>
+    </dl>
+</div>
+<div>
+    @if (User.IsInRole("Директор") || User.IsInRole("Логист"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.ShipmentId" class="btn btn-primary">Редактировать</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+</div>

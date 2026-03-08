@@ -1,0 +1,342 @@
+﻿@{
+    ViewData["Title"] = "Главная страница";
+}
+
+<h1 style="color: #1976D2;">Главная страница</h1>
+
+@if (User.Identity.IsAuthenticated)
+{
+    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    <p>Вы вошли как: <strong>@ViewBag.UserName</strong> (@role)</p>
+
+    <!-- Директор -->
+    @if (role == "Директор")
+    {
+        <div class="row mt-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2" style="border-left: 4px solid #1976D2;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Всего заказов</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@(ViewBag.TotalOrders ?? 0)</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #2E7D32;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Выручка</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") руб.</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2" style="border-left: 4px solid #1976D2;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Товары</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@(ViewBag.TotalProducts ?? 0)</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-cubes fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2" style="border-left: 4px solid #FF6D00;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Клиенты</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@(ViewBag.TotalClients ?? 0)</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold" style="color: #1976D2;">Последние заказы</h6>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.RecentOrders != null && ViewBag.RecentOrders.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Номер</th>
+                                    <th>Дата</th>
+                                    <th>Клиент</th>
+                                    <th>Статус</th>
+                                    <th>Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in ViewBag.RecentOrders)
+                                {
+                                    <tr>
+                                        <td>@order.OrderId</td>
+                                        <td>@order.OrderDate</td>
+                                        <td>@(order.Client?.Name ?? "-")</td>
+                                        <td>@(order.Status?.StatusName ?? "-")</td>
+                                        <td>@order.TotalPrice</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p>Нет заказов.</p>
+                }
+            </div>
+        </div>
+        <a asp-controller="Orders" asp-action="Index" class="btn btn-primary">Все заказы</a>
+    }
+
+    <!-- Менеджер -->
+    @if (role == "Менеджер")
+    {
+        <div class="row mt-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2" style="border-left: 4px solid #1976D2;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Товары</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@(ViewBag.TotalProducts ?? 0)</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-cubes fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2" style="border-left: 4px solid #2E7D32;">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Клиенты</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@(ViewBag.TotalClients ?? 0)</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold" style="color: #1976D2;">Ваши последние заказы</h6>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.RecentOrders != null && ViewBag.RecentOrders.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Номер</th>
+                                    <th>Дата</th>
+                                    <th>Клиент</th>
+                                    <th>Статус</th>
+                                    <th>Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in ViewBag.RecentOrders)
+                                {
+                                    <tr>
+                                        <td>@order.OrderId</td>
+                                        <td>@order.OrderDate</td>
+                                        <td>@(order.Client?.Name ?? "-")</td>
+                                        <td>@(order.Status?.StatusName ?? "-")</td>
+                                        <td>@order.TotalPrice</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p>У вас нет заказов.</p>
+                }
+            </div>
+        </div>
+        <a asp-controller="Orders" asp-action="Index" class="btn btn-primary">Все заказы</a>
+    }
+
+    <!-- Логист -->
+    @if (role == "Логист")
+    {
+        <div class="row mt-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold" style="color: #1976D2;">Активные поставки</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.ActiveShipments != null && ViewBag.ActiveShipments.Count > 0)
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Поставщик</th>
+                                            <th>Статус</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var shipment in ViewBag.ActiveShipments)
+                                        {
+                                            <tr>
+                                                <td>@shipment.ShipmentDate</td>
+                                                <td>@(shipment.Suppliers?.SupplierName ?? "-")</td>
+                                                <td>@(shipment.Statussh?.StatusName ?? "-")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>Нет активных поставок.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a asp-controller="Shipment" asp-action="Index" class="btn btn-primary">Все поставки</a>
+    }
+
+    <!-- Сотрудник (кладовщик) -->
+    @if (role == "Сотрудник")
+    {
+        <div class="row mt-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold" style="color: #1976D2;">Заказы, ожидающие сборки</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.PendingOrders != null && ViewBag.PendingOrders.Count > 0)
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Заказ</th>
+                                            <th>Клиент</th>
+                                            <th>Статус</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in ViewBag.PendingOrders)
+                                        {
+                                            <tr>
+                                                <td>@order.OrderId</td>
+                                                <td>@(order.Client?.Name ?? "-")</td>
+                                                <td>@(order.Status?.StatusName ?? "-")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>Нет заказов, ожидающих сборки.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a asp-controller="Orders" asp-action="Index" class="btn btn-primary">Все заказы</a>
+    }
+
+    <!-- Бухгалтер -->
+    @if (role == "Бухгалтер")
+    {
+        <div class="row mt-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold" style="color: #1976D2;">Последние выполненные заказы</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.CompletedOrders != null && ViewBag.CompletedOrders.Count > 0)
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Номер</th>
+                                            <th>Дата</th>
+                                            <th>Клиент</th>
+                                            <th>Сумма</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in ViewBag.CompletedOrders)
+                                        {
+                                            <tr>
+                                                <td>@order.OrderId</td>
+                                                <td>@order.OrderDate</td>
+                                                <td>@(order.Client?.Name ?? "-")</td>
+                                                <td>@order.TotalPrice</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>Нет выполненных заказов.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a asp-controller="Orders" asp-action="Index" class="btn btn-primary">Все заказы</a>
+    }
+
+    <div style="margin-top: 30px;">
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-warning" style="background-color: #FF6D00; border-color: #FF6D00; color: white;">Выход</a>
+    </div>
+}
+else
+{
+    <p>Для доступа к системе необходимо <a asp-controller="Account" asp-action="Login" style="color: #1976D2;">войти</a>.</p>
+}

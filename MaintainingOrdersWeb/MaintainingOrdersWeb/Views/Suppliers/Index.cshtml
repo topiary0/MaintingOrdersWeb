@@ -1,0 +1,42 @@
+﻿@model IEnumerable<MaintainingOrdersWeb.Models.Supplier>
+
+@{
+    ViewData["Title"] = "Поставщики";
+}
+
+<h1 style="color: #1976D2;">Поставщики</h1>
+
+@if (User.IsInRole("Директор"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать нового поставщика</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Адрес</th>
+            <th>Контактная информация</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.SupplierName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                <td>@Html.DisplayFor(modelItem => item.ContactInfo)</td>
+                <td>
+                    @if (User.IsInRole("Директор"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.SuppliersId">Редактировать</a> @:|
+                        <a asp-action="Delete" asp-route-id="@item.SuppliersId">Удалить</a> @:|
+                    }
+                    <a asp-action="Details" asp-route-id="@item.SuppliersId">Детали</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,301 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = MaintainingOrdersWeb
+build_property.RootNamespace = MaintainingOrdersWeb
+build_property.ProjectDir = C:\Users\Иван\OneDrive\Рабочий стол\Курсовая Челищева Л.Н\Курсовая\MaintainingOrdersWeb\MaintainingOrdersWeb\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\Иван\OneDrive\Рабочий стол\Курсовая Челищева Л.Н\Курсовая\MaintainingOrdersWeb\MaintainingOrdersWeb
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Clients/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50c1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Clients/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50c1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Clients/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50c1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Clients/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50c1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Clients/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/DeliveryMethods/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVsaXZlcnlNZXRob2RzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/DeliveryMethods/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVsaXZlcnlNZXRob2RzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/DeliveryMethods/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVsaXZlcnlNZXRob2RzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/DeliveryMethods/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVsaXZlcnlNZXRob2RzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/DeliveryMethods/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVsaXZlcnlNZXRob2RzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderItems/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJJdGVtc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderItems/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJJdGVtc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderItems/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJJdGVtc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderItems/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJJdGVtc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderItems/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJJdGVtc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderStatus/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJTdGF0dXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderStatus/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJTdGF0dXNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderStatus/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJTdGF0dXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderStatus/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJTdGF0dXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/OrderStatus/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJTdGF0dXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Orders/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Orders/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Orders/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Orders/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Orders/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Products/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Products/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Products/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Products/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Products/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Roles/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Roles/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Roles/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Roles/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Roles/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/ShipmentStatus/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRTdGF0dXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/ShipmentStatus/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRTdGF0dXNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/ShipmentStatus/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRTdGF0dXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/ShipmentStatus/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRTdGF0dXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/ShipmentStatus/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRTdGF0dXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shipment/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shipment/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shipment/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shipment/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shipment/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hpcG1lbnRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Suppliers/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGxpZXJzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Suppliers/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGxpZXJzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Suppliers/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGxpZXJzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Suppliers/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGxpZXJzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Suppliers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGxpZXJzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/SupplyItems/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGx5SXRlbXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/SupplyItems/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGx5SXRlbXNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/SupplyItems/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGx5SXRlbXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/SupplyItems/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGx5SXRlbXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/SupplyItems/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcGx5SXRlbXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Users/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Users/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Users/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Users/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Иван/OneDrive/Рабочий стол/Курсовая Челищева Л.Н/Курсовая/MaintainingOrdersWeb/MaintainingOrdersWeb/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-mj6blw8n3o

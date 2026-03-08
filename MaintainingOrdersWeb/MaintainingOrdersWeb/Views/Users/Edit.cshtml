@@ -1,0 +1,46 @@
+﻿@model MaintainingOrdersWeb.Models.User
+
+@{
+    ViewData["Title"] = "Редактировать пользователя";
+}
+
+<h1 style="color: #1976D2;">Редактировать пользователя</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label">ФИО</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Login" class="control-label">Логин</label>
+                <input asp-for="Login" class="form-control" />
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Пароль</label>
+                <input asp-for="Password" class="form-control" type="password" placeholder="Оставьте пустым, если не хотите менять" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RoleId" class="control-label">Роль</label>
+                <select asp-for="RoleId" class="form-control" asp-items="ViewBag.RoleId"></select>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Сохранить" class="btn btn-primary" style="background-color: #1976D2;" />
+                <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

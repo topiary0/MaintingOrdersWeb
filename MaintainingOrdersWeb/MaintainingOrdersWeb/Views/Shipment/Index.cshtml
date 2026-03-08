@@ -1,0 +1,47 @@
+﻿@model IEnumerable<MaintainingOrdersWeb.Models.Shipment>
+
+@{
+    ViewData["Title"] = "Поставки";
+}
+
+<h1 style="color: #1976D2;">Поставки</h1>
+
+@if (User.IsInRole("Директор") || User.IsInRole("Логист"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать новую поставку</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Поставщик</th>
+            <th>Менеджер</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ShipmentDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.Suppliers.SupplierName)</td>
+                <td>@Html.DisplayFor(modelItem => item.User.FullName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Statussh.StatusName)</td>
+                <td>
+                    @if (User.IsInRole("Директор") || User.IsInRole("Логист"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ShipmentId">Редактировать</a> @:|
+                    }
+                    @if (User.IsInRole("Директор"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.ShipmentId">Удалить</a> @:|
+                    }
+                    <a asp-action="Details" asp-route-id="@item.ShipmentId">Детали</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

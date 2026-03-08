@@ -1,0 +1,38 @@
+﻿@model IEnumerable<MaintainingOrdersWeb.Models.ShipmentStatus>
+
+@{
+    ViewData["Title"] = "Статусы поставок";
+}
+
+<h1 style="color: #1976D2;">Статусы поставок</h1>
+
+@if (User.IsInRole("Директор"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать новый статус</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название статуса</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.StatusName)</td>
+                <td>
+                    @if (User.IsInRole("Директор"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.StatusId" style="color: #1976D2;">Редактировать</a> @:|
+                        <a asp-action="Delete" asp-route-id="@item.StatusId" style="color: #FF6D00;">Удалить</a> @:|
+                    }
+                    <a asp-action="Details" asp-route-id="@item.StatusId" style="color: #1976D2;">Детали</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

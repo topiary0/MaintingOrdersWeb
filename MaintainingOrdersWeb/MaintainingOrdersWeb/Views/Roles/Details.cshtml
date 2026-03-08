@@ -1,0 +1,19 @@
+﻿@model MaintainingOrdersWeb.Models.Role
+
+@{
+    ViewData["Title"] = "Детали роли";
+}
+
+<h1 style="color: #1976D2;">Детали роли</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Название роли</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.RoleName)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.RoleId" class="btn btn-primary" style="background-color: #1976D2;">Редактировать</a>
+    <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+</div>

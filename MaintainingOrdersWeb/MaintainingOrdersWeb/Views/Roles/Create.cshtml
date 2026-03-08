@@ -1,0 +1,25 @@
+﻿@model MaintainingOrdersWeb.Models.Role
+
+@{
+    ViewData["Title"] = "Создать роль";
+}
+
+<h1 style="color: #1976D2;">Создать роль</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RoleName" class="control-label">Название роли</label>
+                <input asp-for="RoleName" class="form-control" />
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Создать" class="btn btn-success" style="background-color: #2E7D32; border-color: #2E7D32;" />
+                <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+            </div>
+        </form>
+    </div>
+</div>

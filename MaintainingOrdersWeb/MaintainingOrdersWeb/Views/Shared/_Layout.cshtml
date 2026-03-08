@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Аптека</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MaintainingOrdersWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #A8C6FA;
+        }
+
+        .navbar {
+            background-color: #1976D2 !important;
+        }
+
+            .navbar a, .navbar .navbar-brand {
+                color: white !important;
+            }
+
+        .btn-success {
+            background-color: #2E7D32 !important;
+            border-color: #2E7D32 !important;
+        }
+
+        .btn-primary {
+            background-color: #1976D2 !important;
+            border-color: #1976D2 !important;
+        }
+
+        .btn-warning {
+            background-color: #FF6D00 !important;
+            border-color: #FF6D00 !important;
+            color: white !important;
+        }
+
+        .btn-logout {
+            background-color: #FF6D00 !important;
+            border-color: #FF6D00 !important;
+            color: white !important;
+        }
+
+            .btn-logout:hover {
+                background-color: #e65100 !important;
+                border-color: #e65100 !important;
+            }
+
+        h1, h2, h3 {
+            color: #1976D2;
+        }
+
+        .table th {
+            background-color: #1976D2;
+            color: white;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-custom border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Аптека Управление</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            // Административные разделы (только Директор)
+                            if (User.IsInRole("Директор"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Roles" asp-action="Index">Роли</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Users" asp-action="Index">Пользователи</a>
+                                </li>
+                            }
+
+                            // Клиенты – доступны Директору, Менеджеру, Логисту, Бухгалтеру
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист") || User.IsInRole("Бухгалтер"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Clients" asp-action="Index">Клиенты</a>
+                                </li>
+                            }
+
+                            // Поставщики – доступны Директору, Менеджеру, Логисту
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Suppliers" asp-action="Index">Поставщики</a>
+                                </li>
+                            }
+
+                            // Товары – доступны всем
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист") || User.IsInRole("Сотрудник") || User.IsInRole("Бухгалтер"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Products" asp-action="Index">Товары</a>
+                                </li>
+                            }
+
+                            // Заказы – доступны всем
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист") || User.IsInRole("Сотрудник") || User.IsInRole("Бухгалтер"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Orders" asp-action="Index">Заказы</a>
+                                </li>
+                            }
+
+                            // Составы заказов – доступны Директору, Менеджеру, Логисту, Сотруднику
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист") || User.IsInRole("Сотрудник"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="OrderItems" asp-action="Index">Составы заказов</a>
+                                </li>
+                            }
+
+                            // Поставки – доступны Директору, Менеджеру, Логисту
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Shipment" asp-action="Index">Поставки</a>
+                                </li>
+                            }
+
+                            // Составы поставок – доступны Директору, Менеджеру, Логисту
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="SupplyItems" asp-action="Index">Составы поставок</a>
+                                </li>
+                            }
+
+                            // Статусы заказов – доступны Директору, Менеджеру, Логисту
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="OrderStatus" asp-action="Index">Статусы заказов</a>
+                                </li>
+                            }
+
+                            // Статусы поставок – доступны Директору, Менеджеру, Логисту
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="ShipmentStatus" asp-action="Index">Статусы поставок</a>
+                                </li>
+                            }
+
+                            // Способы доставки – доступны Директору, Менеджеру, Логисту
+                            @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="DeliveryMethods" asp-action="Index">Способы доставки</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <span class="navbar-text text-white me-3">
+                                    @User.Identity.Name (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-logout" asp-controller="Account" asp-action="Logout">Выход</a>
+                            </li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - Аптека - <a asp-area="" asp-controller="Home" asp-action="Privacy">Политика конфиденциальности</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

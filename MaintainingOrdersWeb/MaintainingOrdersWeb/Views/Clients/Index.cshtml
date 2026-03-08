@@ -1,0 +1,43 @@
+﻿@model IEnumerable<MaintainingOrdersWeb.Models.Client>
+
+@{
+    ViewData["Title"] = "Клиенты";
+}
+
+<h1 style="color: #1976D2;">Клиенты</h1>
+
+@if (User.IsInRole("Директор") || User.IsInRole("Директор"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать нового клиента</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Адрес</th>
+            <th>Телефон</th>
+            <th>Контактное лицо</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+            <td>@Html.DisplayFor(modelItem => item.Address)</td>
+            <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+            <td>@Html.DisplayFor(modelItem => item.ContactPerson)</td>
+            <td>
+                @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.ClientId" style="color: #1976D2;">Редактировать</a> @:|
+                    <a asp-action="Delete" asp-route-id="@item.ClientId" style="color: #FF6D00;">Удалить</a> @:|
+                }
+                <a asp-action="Details" asp-route-id="@item.ClientId" style="color: #1976D2;">Детали</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

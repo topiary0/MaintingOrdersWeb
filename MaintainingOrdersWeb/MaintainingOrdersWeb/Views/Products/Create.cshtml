@@ -1,0 +1,93 @@
+﻿@model MaintainingOrdersWeb.Models.Product
+
+@{
+    ViewData["Title"] = "Создать товар";
+}
+
+<h1 style="color: #1976D2;">Создать товар</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Article" class="control-label">Артикул</label>
+                <input asp-for="Article" class="form-control" />
+                <span asp-validation-for="Article" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Наименование</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label">Цена</label>
+                <input asp-for="Price" class="form-control" step="0.01" lang="en" inputmode="decimal" placeholder="0.00" id="Price" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Описание</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SalePrice" class="control-label">Цена продажи</label>
+                <input asp-for="SalePrice" class="form-control" step="0.01" lang="en" inputmode="decimal" placeholder="0.00" id="SalePrice" />
+                <span asp-validation-for="SalePrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PurchasePrice" class="control-label">Закупочная цена</label>
+                <input asp-for="PurchasePrice" class="form-control" step="0.01" lang="en" inputmode="decimal" placeholder="0.00" id="PurchasePrice" />
+                <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Remains" class="control-label">Остаток</label>
+                <input asp-for="Remains" class="form-control" type="number" min="0" step="1" />
+                <span asp-validation-for="Remains" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Weight" class="control-label">Вес</label>
+                <input asp-for="Weight" class="form-control" step="0.01" lang="en" inputmode="decimal" placeholder="0.00" id="Weight" />
+                <span asp-validation-for="Weight" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Dimensions" class="control-label">Размеры</label>
+                <input asp-for="Dimensions" class="form-control" placeholder="например 30x20x10 см" />
+                <span asp-validation-for="Dimensions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SuppliersId" class="control-label">Поставщик</label>
+                <select asp-for="SuppliersId" class="form-control" asp-items="ViewBag.SuppliersId"></select>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Создать" class="btn btn-success" style="background-color: #2E7D32; border-color: #2E7D32;" />
+                <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('form');
+            if (!form) return;
+            form.addEventListener('submit', function() {
+                var decimalFields = ['Price', 'SalePrice', 'PurchasePrice', 'Weight'];
+                decimalFields.forEach(function(id) {
+                    var input = document.getElementById(id);
+                    if (input) {
+                        var value = input.value;
+                        if (value && value.indexOf(',') !== -1) {
+                            input.value = value.replace(',', '.');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
