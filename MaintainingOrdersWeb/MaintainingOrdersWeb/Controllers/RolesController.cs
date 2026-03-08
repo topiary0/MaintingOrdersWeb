@@ -9,7 +9,7 @@ using MaintainingOrdersWeb.Models;
 
 namespace MaintainingOrdersWeb.Controllers
 {
-    [Authorize] // Доступ только авторизованным пользователям
+    [Authorize(Roles = "Директор")]
     public class RolesController : Controller
     {
         private readonly MyDbContext _context;

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MaintainingOrdersWeb.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Директор,Менеджер,Логист,Сотрудник,Бухгалтер")]
     public class ProductsController : Controller
     {
         private readonly MyDbContext _context;
