@@ -42,9 +42,10 @@ namespace MaintainingOrdersWeb.Controllers
                 .Select(i => new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-5 + i))
                 .ToList();
             var minMonth = monthStarts.First();
+            var minOrderDate = new DateOnly(minMonth.Year, minMonth.Month, 1);
 
             var recentOrders = await _context.Orders
-                .Where(o => new DateTime(o.OrderDate.Year, o.OrderDate.Month, 1) >= minMonth)
+                .Where(o => o.OrderDate >= minOrderDate)
                 .ToListAsync();
 
             var monthStats = recentOrders
