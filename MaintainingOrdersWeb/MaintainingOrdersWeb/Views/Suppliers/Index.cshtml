@@ -6,7 +6,7 @@
 
 <h1 style="color: #1976D2;">Поставщики</h1>
 
-@if (User.IsInRole("Директор"))
+@if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
 {
     <p>
         <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать нового поставщика</a>
@@ -29,7 +29,7 @@
                 <td>@Html.DisplayFor(modelItem => item.Address)</td>
                 <td>@Html.DisplayFor(modelItem => item.ContactInfo)</td>
                 <td>
-                    @if (User.IsInRole("Директор"))
+                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                     {
                         <a asp-action="Edit" asp-route-id="@item.SuppliersId" class="btn btn-outline-primary btn-sm">Редактировать</a>
                         <a asp-action="Delete" asp-route-id="@item.SuppliersId" class="btn btn-outline-danger btn-sm">Удалить</a>

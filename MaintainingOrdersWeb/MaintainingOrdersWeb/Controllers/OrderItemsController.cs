@@ -38,6 +38,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
             ViewData["OrderId"] = new SelectList(_context.Orders, "OrderId", "OrderId"); // или можно отображать дату+клиента
@@ -46,6 +47,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: OrderItems/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,ProductId,Quantity,PriceAtOrder")] OrderItem orderItem)
@@ -64,8 +66,16 @@ namespace MaintainingOrdersWeb.Controllers
             {
                 try
                 {
+                    if (orderItem.PriceAtOrder <= 0)
+                    {
+                        var product = await _context.Products.FindAsync(orderItem.ProductId);
+                        if (product != null)
+                            orderItem.PriceAtOrder = product.Price;
+                    }
+
                     _context.Add(orderItem);
                     await _context.SaveChangesAsync();
+                    await RecalculateOrderTotalAsync(orderItem.OrderId);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -82,6 +92,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems/Edit?orderId=5&productId=3
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int orderId, int productId)
         {
             var orderItem = await _context.OrderItems
@@ -94,6 +105,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: OrderItems/Edit?orderId=5&productId=3
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int orderId, int productId, [Bind("OrderId,ProductId,Quantity,PriceAtOrder")] OrderItem orderItem)
@@ -114,8 +126,16 @@ namespace MaintainingOrdersWeb.Controllers
             {
                 try
                 {
+                    if (orderItem.PriceAtOrder <= 0)
+                    {
+                        var product = await _context.Products.FindAsync(orderItem.ProductId);
+                        if (product != null)
+                            orderItem.PriceAtOrder = product.Price;
+                    }
+
                     _context.Update(orderItem);
                     await _context.SaveChangesAsync();
+                    await RecalculateOrderTotalAsync(orderItem.OrderId);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -139,6 +159,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems/Delete?orderId=5&productId=3
+        [Authorize(Roles = "Директор")]
         public async Task<IActionResult> Delete(int orderId, int productId)
         {
             var orderItem = await _context.OrderItems
@@ -151,6 +172,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: OrderItems/Delete?orderId=5&productId=3
+        [Authorize(Roles = "Директор")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int orderId, int productId)
@@ -161,7 +183,28 @@ namespace MaintainingOrdersWeb.Controllers
                 _context.OrderItems.Remove(orderItem);
 
             await _context.SaveChangesAsync();
+            await RecalculateOrderTotalAsync(orderId);
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task RecalculateOrderTotalAsync(int orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.Method)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+                return;
+
+            var itemsSum = await _context.OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .SumAsync(oi => (decimal?)(oi.Quantity * oi.PriceAtOrder)) ?? 0m;
+
+            var deliveryCost = order.Method?.Price ?? 0m;
+            order.TotalPrice = itemsSum + deliveryCost;
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
         }
 
         private bool OrderItemExists(int orderId, int productId)
@@ -170,4 +213,3 @@ namespace MaintainingOrdersWeb.Controllers
         }
     }
 }
-

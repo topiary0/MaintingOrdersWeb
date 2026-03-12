@@ -1,3 +1,4 @@
+using QuestPDF.Infrastructure;
 using System.Globalization;
 using MaintainingOrdersWeb.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -20,6 +21,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 

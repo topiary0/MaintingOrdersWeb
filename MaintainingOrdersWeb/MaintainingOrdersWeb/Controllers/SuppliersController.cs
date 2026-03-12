@@ -34,12 +34,14 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Suppliers/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Suppliers/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("SuppliersId,SupplierName,Address,ContactInfo")] Supplier supplier)
@@ -63,6 +65,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Suppliers/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -74,6 +77,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: Suppliers/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("SuppliersId,SupplierName,Address,ContactInfo")] Supplier supplier)
@@ -106,6 +110,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Suppliers/Delete/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -118,6 +123,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: Suppliers/Delete/5
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
