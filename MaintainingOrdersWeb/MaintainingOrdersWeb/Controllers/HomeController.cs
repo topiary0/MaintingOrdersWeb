@@ -30,6 +30,12 @@ namespace MaintainingOrdersWeb.Controllers
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
             ViewBag.TotalRevenue = await _context.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
 
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            ViewBag.TodayOrdersCount = await _context.Orders.CountAsync(o => o.OrderDate == today);
+            ViewBag.ActiveShipmentsCount = await _context.Shipments.CountAsync();
+            ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Remains <= 10);
+
             var lowStockProducts = await _context.Products
                 .OrderBy(p => p.Remains)
                 .Take(7)

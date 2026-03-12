@@ -10,9 +10,9 @@
 @if (User.IsInRole("Директор"))
 {
     <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Панель директора</h3>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
                 <a class="btn btn-sm btn-primary" asp-controller="Reports" asp-action="Index">Отчёты</a>
                 <a class="btn btn-sm btn-outline-primary" asp-controller="Users" asp-action="Index">Пользователи</a>
             </div>
@@ -21,8 +21,8 @@
         <div class="row g-2 mb-3">
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов сегодня</div><div class="metric-value">@ViewBag.TodayOrdersCount</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Клиенты</div><div class="metric-value">@ViewBag.TotalClients</div></div></div>
-            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Товары</div><div class="metric-value">@ViewBag.TotalProducts</div></div></div>
         </div>
 
         <div class="row g-2 mb-3">
@@ -32,7 +32,7 @@
             <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Каталог товаров</a></div>
         </div>
 
-        <div style="max-width: 700px; height: 190px;">
+        <div class="chart-wrap">
             <canvas id="directorChart"></canvas>
         </div>
     </div>
@@ -41,22 +41,22 @@
 @if (User.IsInRole("Менеджер"))
 {
     <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Панель менеджера</h3>
             <div class="d-flex gap-2 flex-wrap">
                 <a class="btn btn-sm btn-primary" asp-controller="Orders" asp-action="Create">Новый заказ</a>
-                <a class="btn btn-sm btn-outline-primary" asp-controller="Clients" asp-action="Create">Новый клиент</a>
+                <a class="btn btn-sm btn-outline-primary" asp-controller="Shipment" asp-action="Create">Новая поставка</a>
             </div>
         </div>
 
         <div class="row g-2 mb-3">
             <div class="col-md-3"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Реестр заказов</a></div>
-            <div class="col-md-3"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Составы заказов</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Clients" asp-action="Create">Добавить клиента</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Shipment" asp-action="Index">Поставки</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="SupplyItems" asp-action="Index">Составы поставок</a></div>
         </div>
 
-        <div style="max-width: 560px; height: 190px;">
+        <div class="chart-wrap">
             <canvas id="managerChart"></canvas>
         </div>
     </div>
@@ -65,7 +65,7 @@
 @if (User.IsInRole("Логист"))
 {
     <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Панель логиста</h3>
             <a class="btn btn-sm btn-outline-primary" asp-controller="DeliveryMethods" asp-action="Index">Способы доставки</a>
         </div>
@@ -76,7 +76,7 @@
             <div class="col-md-4"><a class="quick-tile" asp-controller="Products" asp-action="Index">Остатки товаров</a></div>
         </div>
 
-        <div style="max-width: 700px; height: 190px;">
+        <div class="chart-wrap">
             <canvas id="logisticChart"></canvas>
         </div>
     </div>
@@ -85,17 +85,18 @@
 @if (User.IsInRole("Сотрудник"))
 {
     <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Панель склада</h3>
             <a class="btn btn-sm btn-primary" asp-controller="Orders" asp-action="Index">В работу</a>
         </div>
 
         <div class="row g-2 mb-3">
-            <div class="col-md-6"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Заказы на сборку</a></div>
-            <div class="col-md-6"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
+            <div class="col-md-4"><div class="metric-card"><div class="metric-title">Низкие остатки</div><div class="metric-value">@ViewBag.LowStockCount</div></div></div>
+            <div class="col-md-4"><div class="metric-card"><div class="metric-title">Заказы сегодня</div><div class="metric-value">@ViewBag.TodayOrdersCount</div></div></div>
+            <div class="col-md-4"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
         </div>
 
-        <div style="max-width: 700px; height: 190px;">
+        <div class="chart-wrap">
             <canvas id="employeeChart"></canvas>
         </div>
     </div>
@@ -104,18 +105,19 @@
 @if (User.IsInRole("Бухгалтер"))
 {
     <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Панель бухгалтера</h3>
             <a class="btn btn-sm btn-primary" asp-controller="Reports" asp-action="Index">Отчётность и PDF</a>
         </div>
 
         <div class="row g-2 mb-3">
-            <div class="col-md-4"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
-            <div class="col-md-4"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
-            <div class="col-md-4"><div class="metric-card"><div class="metric-title">Клиенты</div><div class="metric-value">@ViewBag.TotalClients</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Поставок</div><div class="metric-value">@ViewBag.ActiveShipmentsCount</div></div></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Reports" asp-action="Index">Сформировать отчет</a></div>
         </div>
 
-        <div style="max-width: 700px; height: 190px;">
+        <div class="chart-wrap">
             <canvas id="accountantChart"></canvas>
         </div>
     </div>
@@ -181,7 +183,7 @@
                 type: 'bar',
                 data: {
                     labels: logisticLabels,
-                    datasets: [{ label: 'Заказы по статусам', data: logisticCounts, backgroundColor: 'rgba(106,27,154,0.75)', borderRadius: 6, maxBarThickness: 28 }]
+                    datasets: [{ label: 'Заказы по статусам', data: logisticCounts, backgroundColor: 'rgba(106,27,154,0.75)', borderRadius: 6, maxBarThickness: 36 }]
                 },
                 options: commonOptions
             });
@@ -197,7 +199,7 @@
                 type: 'bar',
                 data: {
                     labels: employeeLabels,
-                    datasets: [{ label: 'Остаток', data: employeeCounts, backgroundColor: 'rgba(239,108,0,0.75)', borderRadius: 6, maxBarThickness: 28 }]
+                    datasets: [{ label: 'Остаток', data: employeeCounts, backgroundColor: 'rgba(239,108,0,0.75)', borderRadius: 6, maxBarThickness: 36 }]
                 },
                 options: commonOptions
             });
@@ -212,8 +214,8 @@
                 data: {
                     labels: monthLabels,
                     datasets: [
-                        { label: 'Выручка, ₽', data: monthRevenue, backgroundColor: 'rgba(46,125,50,0.75)', borderRadius: 6, maxBarThickness: 24 },
-                        { label: 'Заказы', data: monthOrders, backgroundColor: 'rgba(21,101,192,0.75)', borderRadius: 6, maxBarThickness: 24 }
+                        { label: 'Выручка, ₽', data: monthRevenue, backgroundColor: 'rgba(46,125,50,0.75)', borderRadius: 6, maxBarThickness: 28 },
+                        { label: 'Заказы', data: monthOrders, backgroundColor: 'rgba(21,101,192,0.75)', borderRadius: 6, maxBarThickness: 28 }
                     ]
                 },
                 options: commonOptions

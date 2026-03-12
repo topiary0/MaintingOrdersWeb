@@ -73,8 +73,7 @@ main h3 {
 }
 
 main hr {
-  border-color: #cfe0ff;
-  opacity: 1;
+  display: none;
 }
 
 main .row > .col-md-4,
@@ -155,4 +154,17 @@ main dd {
 
 .global-back-btn:hover {
   background: #e9f2ff;
+}
+
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  height: 36vh;
+  max-height: 420px;
+  background: rgba(255,255,255,.65);
+  border: 1px solid #d5e4ff;
+  border-radius: 14px;
+  padding: .5rem;
 }
