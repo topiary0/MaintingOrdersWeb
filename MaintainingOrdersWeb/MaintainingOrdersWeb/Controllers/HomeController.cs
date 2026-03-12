@@ -30,50 +30,61 @@ namespace MaintainingOrdersWeb.Controllers
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
             ViewBag.TotalRevenue = await _context.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
 
-            ViewBag.RecentOrders = await _context.Orders
-                .Include(o => o.Client)
-                .Include(o => o.Status)
-                .OrderByDescending(o => o.OrderDate)
-                .Take(5)
-                .ToListAsync();
 
-            ViewBag.LowStockProducts = await _context.Products
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            ViewBag.TodayOrdersCount = await _context.Orders.CountAsync(o => o.OrderDate == today);
+            ViewBag.ActiveShipmentsCount = await _context.Shipments.CountAsync();
+            ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Remains <= 10);
+
+            var lowStockProducts = await _context.Products
                 .OrderBy(p => p.Remains)
-                .Take(5)
+                .Take(7)
+                .ToListAsync();
+            ViewBag.LowStockProducts = lowStockProducts;
+            ViewBag.LowStockLabels = lowStockProducts.Select(p => p.Name).ToList();
+            ViewBag.LowStockCounts = lowStockProducts.Select(p => p.Remains).ToList();
+
+            var monthStarts = Enumerable.Range(0, 6)
+                .Select(i => new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-5 + i))
+                .ToList();
+            var minMonth = monthStarts.First();
+            var minOrderDate = new DateOnly(minMonth.Year, minMonth.Month, 1);
+
+            var recentOrders = await _context.Orders
+                .Where(o => o.OrderDate >= minOrderDate)
                 .ToListAsync();
 
-            ViewBag.TodaysOrders = await _context.Orders
-                .Include(o => o.Client)
+            var monthStats = recentOrders
+                .GroupBy(o => new { o.OrderDate.Year, o.OrderDate.Month })
+                .Select(g => new { g.Key.Year, g.Key.Month, Revenue = g.Sum(x => x.TotalPrice), Count = g.Count() })
+                .ToList();
+
+            ViewBag.MonthLabels = monthStarts.Select(m => m.ToString("MM.yyyy")).ToList();
+            ViewBag.MonthRevenue = monthStarts
+                .Select(m => monthStats.FirstOrDefault(r => r.Year == m.Year && r.Month == m.Month)?.Revenue ?? 0m)
+                .ToList();
+            ViewBag.MonthOrders = monthStarts
+                .Select(m => monthStats.FirstOrDefault(r => r.Year == m.Year && r.Month == m.Month)?.Count ?? 0)
+                .ToList();
+
+            var managerStatusStats = await _context.Orders
                 .Include(o => o.Status)
-                .Where(o => o.OrderDate == DateOnly.FromDateTime(DateTime.Today))
+                .GroupBy(o => o.Status.StatusName)
+                .Select(g => new { Status = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Count)
                 .ToListAsync();
+            ViewBag.ManagerStatusStats = managerStatusStats;
+            ViewBag.ManagerStatusLabels = managerStatusStats.Select(x => x.Status).ToList();
+            ViewBag.ManagerStatusCounts = managerStatusStats.Select(x => x.Count).ToList();
 
-            ViewBag.ActiveShipments = await _context.Shipments
-                .Include(s => s.Suppliers)
+            var shipmentStatusStats = await _context.Shipments
                 .Include(s => s.Statussh)
-                .OrderByDescending(s => s.ShipmentDate)
-                .Take(5)
+                .GroupBy(s => s.Statussh.StatusName)
+                .Select(g => new { Status = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Count)
                 .ToListAsync();
-
-            var startWeek = DateOnly.FromDateTime(DateTime.Today.AddDays(-6));
-            ViewBag.WeeklyTopDay = await _context.Orders
-                .Where(o => o.OrderDate >= startWeek)
-                .GroupBy(o => o.OrderDate)
-                .Select(g => new { Date = g.Key, Revenue = g.Sum(x => x.TotalPrice) })
-                .OrderByDescending(x => x.Revenue)
-                .FirstOrDefaultAsync();
-
-            var quarterStartMonth = ((DateTime.Today.Month - 1) / 3) * 3 + 1;
-            var quarterStart = new DateOnly(DateTime.Today.Year, quarterStartMonth, 1);
-            ViewBag.QuarterDeals = await _context.Orders.CountAsync(o => o.OrderDate >= quarterStart);
-
-            ViewBag.TopManagers = await _context.Orders
-                .Include(o => o.User)
-                .GroupBy(o => o.User.FullName)
-                .Select(g => new { Manager = g.Key, Revenue = g.Sum(x => x.TotalPrice), Deals = g.Count() })
-                .OrderByDescending(x => x.Revenue)
-                .Take(5)
-                .ToListAsync();
+            ViewBag.ShipmentStatusLabels = shipmentStatusStats.Select(x => x.Status).ToList();
+            ViewBag.ShipmentStatusCounts = shipmentStatusStats.Select(x => x.Count).ToList();
 
             return View();
         }

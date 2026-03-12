@@ -19,37 +19,53 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Главная</a></li>
+
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         if (User.IsInRole("Директор"))
                         {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Roles" asp-action="Index">Роли</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="Index">Пользователи</a></li>
-                        }
-                        if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист") || User.IsInRole("Бухгалтер"))
-                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Roles" asp-action="Index">Роли</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Clients" asp-action="Index">Клиенты</a></li>
-                        }
-                        if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист"))
-                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Товары</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index">Заказы</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Suppliers" asp-action="Index">Поставщики</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Shipment" asp-action="Index">Поставки</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="SupplyItems" asp-action="Index">Составы поставок</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="Index">Отчеты</a></li>
+                        }
+                        else if (User.IsInRole("Менеджер"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Clients" asp-action="Index">Клиенты</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Товары</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index">Заказы</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="OrderStatus" asp-action="Index">Статусы заказов</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Suppliers" asp-action="Index">Поставщики</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Shipment" asp-action="Index">Поставки</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="ShipmentStatus" asp-action="Index">Статусы поставок</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="SupplyItems" asp-action="Index">Составы поставок</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="DeliveryMethods" asp-action="Index">Способы доставки</a></li>
                         }
-                        if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист") || User.IsInRole("Сотрудник") || User.IsInRole("Бухгалтер"))
+                        else if (User.IsInRole("Логист"))
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Товары</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index">Заказы</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="DeliveryMethods" asp-action="Index">Способы доставки</a></li>
                         }
-                        if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Логист") || User.IsInRole("Сотрудник"))
+                        else if (User.IsInRole("Сотрудник"))
                         {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Товары</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index">Заказы</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></li>
                         }
-                        if (User.IsInRole("Директор") || User.IsInRole("Бухгалтер"))
+                        else if (User.IsInRole("Бухгалтер"))
                         {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Clients" asp-action="Index">Клиенты</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Товары</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index">Заказы</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="Index">Отчеты</a></li>
                         }
                     }
@@ -70,6 +86,10 @@
         @RenderBody()
     </main>
 </div>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <button type="button" class="btn btn-light global-back-btn" onclick="window.history.back();">← Назад</button>
+}
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

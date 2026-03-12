@@ -6,7 +6,12 @@
 
 <h1 style="color: #1976D2;">Способы доставки</h1>
 
-@if (User.IsInRole("Директор"))
+@if (TempData["DeliveryMethodError"] is string err)
+{
+    <div class="alert alert-warning">@err</div>
+}
+
+@if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
 {
     <p>
         <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать новый способ</a>
@@ -29,7 +34,7 @@
                 <td>@Html.DisplayFor(modelItem => item.Price)</td>
                 <td>@Html.DisplayFor(modelItem => item.EstimatedTime)</td>
                 <td>
-                    @if (User.IsInRole("Директор"))
+                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                     {
                         <a asp-action="Edit" asp-route-id="@item.MethodId" style="color: #1976D2;" class="btn btn-outline-primary btn-sm">Редактировать</a>
                         <a asp-action="Delete" asp-route-id="@item.MethodId" style="color: #FF6D00;" class="btn btn-outline-danger btn-sm">Удалить</a>

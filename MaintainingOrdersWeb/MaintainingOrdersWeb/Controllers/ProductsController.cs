@@ -37,6 +37,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Products/Create
+        [Authorize(Roles = "Директор")]
         public IActionResult Create()
         {
             ViewData["SuppliersId"] = new SelectList(_context.Suppliers, "SuppliersId", "SupplierName");
@@ -44,6 +45,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: Products/Create
+        [Authorize(Roles = "Директор")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,Article,Name,Price,Description,SalePrice,PurchasePrice,Remains,Weight,Dimensions,SuppliersId")] Product product)
@@ -78,6 +80,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Products/Edit/5
+        [Authorize(Roles = "Директор")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -90,6 +93,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: Products/Edit/5
+        [Authorize(Roles = "Директор")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProductId,Article,Name,Price,Description,SalePrice,PurchasePrice,Remains,Weight,Dimensions,SuppliersId")] Product product)
@@ -130,6 +134,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize(Roles = "Директор")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -143,6 +148,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: Products/Delete/5
+        [Authorize(Roles = "Директор")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

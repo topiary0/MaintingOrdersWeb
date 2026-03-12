@@ -34,12 +34,14 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: ShipmentStatus/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: ShipmentStatus/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("StatusId,StatusName")] ShipmentStatus shipmentStatus)
@@ -63,6 +65,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: ShipmentStatus/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -74,6 +77,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: ShipmentStatus/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("StatusId,StatusName")] ShipmentStatus shipmentStatus)
@@ -106,6 +110,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: ShipmentStatus/Delete/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -118,6 +123,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: ShipmentStatus/Delete/5
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

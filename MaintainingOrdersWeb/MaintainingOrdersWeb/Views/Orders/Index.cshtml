@@ -1,10 +1,45 @@
-﻿@model IEnumerable<MaintainingOrdersWeb.Models.Order>
+@model IEnumerable<MaintainingOrdersWeb.Models.Order>
 
 @{
     ViewData["Title"] = "Заказы";
+    var filterDateValue = ViewBag.FilterOrderDate != null ? ((DateOnly)ViewBag.FilterOrderDate).ToString("yyyy-MM-dd") : string.Empty;
 }
 
 <h1 style="color: #1976D2;">Заказы</h1>
+
+<div class="glass-card p-3 mb-3">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Номер заказа (ID)</label>
+            <input type="number" class="form-control" name="orderId" value="@ViewBag.FilterOrderId" min="1" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Клиент</label>
+            <select class="form-select" name="clientId">
+                <option value="">Все</option>
+                @foreach (var client in ViewBag.Clients)
+                {
+                    if (ViewBag.FilterClientId != null && (int)ViewBag.FilterClientId == client.ClientId)
+                    {
+                        <option value="@client.ClientId" selected>@client.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@client.ClientId">@client.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Дата</label>
+            <input type="date" class="form-control" name="orderDate" value="@filterDateValue" />
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Поиск</button>
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">Сброс</a>
+        </div>
+    </form>
+</div>
 
 @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
 {
@@ -37,13 +72,13 @@
                     {
                         <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-outline-primary btn-sm">Редактировать</a>
                     }
-                    @if (User.IsInRole("Директор"))
+                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                     {
                         <a asp-action="Delete" asp-route-id="@item.OrderId" class="btn btn-outline-danger btn-sm">Удалить</a>
                     }
                     <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-outline-info btn-sm">Детали</a>
 
-                    @if (User.IsInRole("Сотрудник") && item.StatusId != 2) 
+                    @if (User.IsInRole("Сотрудник") && item.StatusId != 2)
                     {
                         <form asp-action="MarkAsPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
                             @Html.AntiForgeryToken()

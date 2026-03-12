@@ -17,14 +17,39 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? orderId, int? clientId, DateOnly? orderDate)
         {
-            var orders = _context.Orders
+            var ordersQuery = _context.Orders
                 .Include(o => o.Status)
                 .Include(o => o.Client)
                 .Include(o => o.User)
-                .Include(o => o.Method);
-            return View(await orders.ToListAsync());
+                .Include(o => o.Method)
+                .AsQueryable();
+
+            if (orderId.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.OrderId == orderId.Value);
+            }
+
+            if (clientId.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.ClientId == clientId.Value);
+            }
+
+            if (orderDate.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.OrderDate == orderDate.Value);
+            }
+
+            ViewBag.FilterOrderId = orderId;
+            ViewBag.FilterClientId = clientId;
+            ViewBag.FilterOrderDate = orderDate;
+            ViewBag.Clients = await _context.Clients
+                .OrderBy(c => c.Name)
+                .Select(c => new { c.ClientId, c.Name })
+                .ToListAsync();
+
+            return View(await ordersQuery.OrderByDescending(o => o.OrderDate).ToListAsync());
         }
 
         // GET: Orders/Details/5
@@ -72,6 +97,7 @@ namespace MaintainingOrdersWeb.Controllers
                 {
                     _context.Add(order);
                     await _context.SaveChangesAsync();
+                    await RecalculateOrderTotalAsync(order.OrderId);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -125,6 +151,7 @@ namespace MaintainingOrdersWeb.Controllers
                 {
                     _context.Update(order);
                     await _context.SaveChangesAsync();
+                    await RecalculateOrderTotalAsync(order.OrderId);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -148,7 +175,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders/Delete/5
-        [Authorize(Roles = "Директор")]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -167,7 +194,7 @@ namespace MaintainingOrdersWeb.Controllers
         // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Директор")]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -199,6 +226,24 @@ namespace MaintainingOrdersWeb.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task RecalculateOrderTotalAsync(int orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.Method)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+                return;
+
+            var itemsSum = await _context.OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .SumAsync(oi => (decimal?)(oi.Quantity * oi.PriceAtOrder)) ?? 0m;
+
+            var deliveryCost = order.Method?.Price ?? 0m;
+            order.TotalPrice = itemsSum + deliveryCost;
+            await _context.SaveChangesAsync();
         }
 
         private bool OrderExists(int id)

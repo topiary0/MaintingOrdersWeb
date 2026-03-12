@@ -10,6 +10,31 @@
     <div class="col-md-4"><div class="metric-card"><div class="metric-title">Ответственный</div><div class="metric-value">@User.Identity?.Name</div></div></div>
 </div>
 
+@if (User.IsInRole("Бухгалтер"))
+{
+    <form asp-action="ExportAccountingPdf" method="post" class="mb-3">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Сформировать отчет в PDF</button>
+    </form>
+}
+
+<div class="glass-card p-3 mb-4">
+    <h3>Экспорт отчета по продажам (PDF)</h3>
+    <form asp-action="ExportSalesPdf" method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Дата с</label>
+            <input type="date" class="form-control" name="dateFrom" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Дата по</label>
+            <input type="date" class="form-control" name="dateTo" />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-outline-success">Скачать PDF</button>
+        </div>
+    </form>
+</div>
+
 <div class="glass-card p-3 mb-4">
     <h3>Эффективность менеджеров</h3>
     <div class="table-responsive">

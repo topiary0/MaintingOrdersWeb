@@ -22,7 +22,7 @@
     </dl>
 </div>
 <div>
-    @if (User.IsInRole("Директор") || User.IsInRole("Логист"))
+    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
     {
         <a asp-action="Edit" asp-route-id="@Model?.ShipmentId" class="btn btn-primary">Редактировать</a>
     }

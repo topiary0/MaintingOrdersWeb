@@ -34,12 +34,14 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: DeliveryMethods/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: DeliveryMethods/Create
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MethodId,MethodName,Price,EstimatedTime")] DeliveryMethod deliveryMethod)
@@ -63,6 +65,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: DeliveryMethods/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -74,6 +77,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: DeliveryMethods/Edit/5
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MethodId,MethodName,Price,EstimatedTime")] DeliveryMethod deliveryMethod)
@@ -86,6 +90,7 @@ namespace MaintainingOrdersWeb.Controllers
                 {
                     _context.Update(deliveryMethod);
                     await _context.SaveChangesAsync();
+                    await RecalculateOrdersByMethodAsync(deliveryMethod.MethodId, deliveryMethod.Price);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -106,6 +111,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: DeliveryMethods/Delete/5
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -118,10 +124,18 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: DeliveryMethods/Delete/5
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var isUsed = await _context.Orders.AnyAsync(o => o.MethodId == id);
+            if (isUsed)
+            {
+                TempData["DeliveryMethodError"] = "Способ доставки используется в заказах и не может быть удален.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var deliveryMethod = await _context.DeliveryMethods.FindAsync(id);
             if (deliveryMethod != null)
                 _context.DeliveryMethods.Remove(deliveryMethod);
@@ -133,6 +147,24 @@ namespace MaintainingOrdersWeb.Controllers
         private bool DeliveryMethodExists(int id)
         {
             return _context.DeliveryMethods.Any(e => e.MethodId == id);
+        }
+
+        private async Task RecalculateOrdersByMethodAsync(int methodId, decimal deliveryPrice)
+        {
+            var relatedOrders = await _context.Orders
+                .Where(o => o.MethodId == methodId)
+                .ToListAsync();
+
+            foreach (var order in relatedOrders)
+            {
+                var itemsTotal = await _context.OrderItems
+                    .Where(oi => oi.OrderId == order.OrderId)
+                    .SumAsync(oi => (decimal?)(oi.Quantity * oi.PriceAtOrder)) ?? 0m;
+
+                order.TotalPrice = itemsTotal + deliveryPrice;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

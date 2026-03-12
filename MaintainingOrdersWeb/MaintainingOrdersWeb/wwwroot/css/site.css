@@ -73,8 +73,7 @@ main h3 {
 }
 
 main hr {
-  border-color: #cfe0ff;
-  opacity: 1;
+  display: none;
 }
 
 main .row > .col-md-4,
@@ -90,8 +89,7 @@ main .row > .col {
 main form,
 main dl.row,
 main table.table,
-main .table-responsive,
-main > div:has(> dl.row) {
+main .table-responsive {
   background: rgba(255,255,255,.9);
   border: 1px solid #d5e4ff;
   border-radius: 14px;
@@ -139,4 +137,42 @@ main dt {
 
 main dd {
   margin-bottom: .65rem;
+}
+
+
+.global-back-btn {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 1050;
+  border: 1px solid #cdddf9;
+  box-shadow: 0 6px 16px rgba(17,74,159,0.18);
+  border-radius: 999px;
+  padding: .35rem .8rem;
+}
+
+.global-back-btn:hover {
+  background: #e9f2ff;
+}
+
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  height: 36vh;
+  max-height: 420px;
+  background: rgba(255,255,255,.65);
+  border: 1px solid #d5e4ff;
+  border-radius: 14px;
+  padding: .5rem;
+}
+
+
+main dl.row {
+  background: rgba(255,255,255,.92) !important;
+  border: 1px solid #d5e4ff !important;
+  box-shadow: 0 8px 20px rgba(21, 74, 161, 0.08) !important;
+  border-radius: 14px;
+  padding: 1rem !important;
 }
