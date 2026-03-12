@@ -19,6 +19,23 @@
 }
 
 <div class="glass-card p-3 mb-4">
+    <h3>Экспорт отчета по продажам (CSV)</h3>
+    <form asp-action="ExportSalesCsv" method="get" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Дата с</label>
+            <input type="date" class="form-control" name="dateFrom" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Дата по</label>
+            <input type="date" class="form-control" name="dateTo" />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-outline-success">Скачать CSV</button>
+        </div>
+    </form>
+</div>
+
+<div class="glass-card p-3 mb-4">
     <h3>Эффективность менеджеров</h3>
     <div class="table-responsive">
         <table class="table table-modern">
