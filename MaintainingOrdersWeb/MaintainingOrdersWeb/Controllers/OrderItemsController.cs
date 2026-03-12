@@ -159,7 +159,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems/Delete?orderId=5&productId=3
-        [Authorize(Roles = "Директор")]
+        [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> Delete(int orderId, int productId)
         {
             var orderItem = await _context.OrderItems
@@ -172,7 +172,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: OrderItems/Delete?orderId=5&productId=3
-        [Authorize(Roles = "Директор")]
+        [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int orderId, int productId)

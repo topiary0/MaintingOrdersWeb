@@ -32,9 +32,13 @@
                     @if (User.IsInRole("Директор"))
                     {
                         <a asp-action="Edit" asp-route-id="@item.MethodId" style="color: #1976D2;" class="btn btn-outline-primary btn-sm">Редактировать</a>
+                        <a asp-action="Details" asp-route-id="@item.MethodId" style="color: #1976D2;" class="btn btn-outline-info btn-sm">Детали</a>
                         <a asp-action="Delete" asp-route-id="@item.MethodId" style="color: #FF6D00;" class="btn btn-outline-danger btn-sm">Удалить</a>
                     }
-                    <a asp-action="Details" asp-route-id="@item.MethodId" style="color: #1976D2;" class="btn btn-outline-info btn-sm">Детали</a>
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.MethodId" style="color: #1976D2;" class="btn btn-outline-info btn-sm">Детали</a>
+                    }
                 </td>
             </tr>
         }

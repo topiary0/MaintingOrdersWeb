@@ -34,12 +34,13 @@
                     @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                     {
                         <a asp-action="Edit" asp-route-id="@item.ShipmentId" class="btn btn-outline-primary btn-sm">Редактировать</a>
-                    }
-                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
-                    {
+                        <a asp-action="Details" asp-route-id="@item.ShipmentId" class="btn btn-outline-info btn-sm">Детали</a>
                         <a asp-action="Delete" asp-route-id="@item.ShipmentId" class="btn btn-outline-danger btn-sm">Удалить</a>
                     }
-                    <a asp-action="Details" asp-route-id="@item.ShipmentId" class="btn btn-outline-info btn-sm">Детали</a>
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.ShipmentId" class="btn btn-outline-info btn-sm">Детали</a>
+                    }
                 </td>
             </tr>
         }

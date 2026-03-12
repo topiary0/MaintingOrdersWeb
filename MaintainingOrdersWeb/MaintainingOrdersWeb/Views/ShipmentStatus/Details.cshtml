@@ -14,7 +14,7 @@
     </dl>
 </div>
 <div>
-    @if (User.IsInRole("Директор"))
+    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
     {
         <a asp-action="Edit" asp-route-id="@Model?.StatusId" class="btn btn-primary" style="background-color: #1976D2;">Редактировать</a>
     }
