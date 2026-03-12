@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
-using System.Text;
 
 namespace MaintainingOrdersWeb.Controllers
 {
@@ -48,7 +47,7 @@ namespace MaintainingOrdersWeb.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> ExportSalesCsv(DateOnly? dateFrom, DateOnly? dateTo)
+        public async Task<IActionResult> ExportSalesPdf(DateOnly? dateFrom, DateOnly? dateTo)
         {
             var from = dateFrom ?? new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
             var to = dateTo ?? DateOnly.FromDateTime(DateTime.Today);
@@ -58,7 +57,7 @@ namespace MaintainingOrdersWeb.Controllers
                 .Include(oi => oi.Product)
                 .Where(oi => oi.Order.OrderDate >= from && oi.Order.OrderDate <= to)
                 .GroupBy(oi => oi.Product.Name)
-                .Select(g => new
+                .Select(g => new SalesReportDocument.SalesRow
                 {
                     Product = g.Key,
                     Quantity = g.Sum(x => x.Quantity),
@@ -67,16 +66,9 @@ namespace MaintainingOrdersWeb.Controllers
                 .OrderByDescending(x => x.Amount)
                 .ToListAsync();
 
-            var csv = new StringBuilder();
-            csv.AppendLine("Товар;Количество;Сумма");
-            foreach (var row in sales)
-            {
-                csv.AppendLine($"{row.Product};{row.Quantity};{row.Amount:F2}");
-            }
-
-            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
-            var fileName = $"SalesReport_{from:yyyyMMdd}_{to:yyyyMMdd}.csv";
-            return File(bytes, "text/csv", fileName);
+            var document = new SalesReportDocument(from, to, sales);
+            var pdfBytes = document.GeneratePdf();
+            return File(pdfBytes, "application/pdf", $"SalesReport_{from:yyyyMMdd}_{to:yyyyMMdd}.pdf");
         }
 
         [HttpPost]
