@@ -10,7 +10,7 @@
     <div class="col-md-4"><div class="metric-card"><div class="metric-title">Ответственный</div><div class="metric-value">@User.Identity?.Name</div></div></div>
 </div>
 
-@if (User.IsInRole("Бухгалтер"))
+@if (User.IsInRole("Директор") || User.IsInRole("Бухгалтер"))
 {
     <form asp-action="ExportAccountingPdf" method="post" class="mb-3">
         @Html.AntiForgeryToken()

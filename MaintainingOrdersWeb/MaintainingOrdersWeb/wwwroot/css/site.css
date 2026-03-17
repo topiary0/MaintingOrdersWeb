@@ -121,6 +121,12 @@ main button[type="submit"] {
 
 main .btn {
   border-radius: 10px;
+  min-width: 120px;
+  text-align: center;
+}
+
+main .btn.btn-sm {
+  min-width: 120px;
 }
 
 main .btn-outline-primary { border-color: #1b62c3; color: #1b62c3; }
