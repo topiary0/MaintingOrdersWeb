@@ -97,6 +97,16 @@ namespace MaintainingOrdersWeb.Controllers
                 {
                     _context.Add(order);
                     await _context.SaveChangesAsync();
+
+                    var selectedStatus = await _context.OrderStatuses
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.StatusId == order.StatusId);
+
+                    if (IsCompletedStatus(selectedStatus?.StatusName))
+                    {
+                        await ApplyOrderToStockAsync(order.OrderId);
+                    }
+
                     await RecalculateOrderTotalAsync(order.OrderId, preserveManualWhenNoItems: true);
                     return RedirectToAction(nameof(Index));
                 }
@@ -149,8 +159,34 @@ namespace MaintainingOrdersWeb.Controllers
             {
                 try
                 {
+                    var existingOrder = await _context.Orders
+                        .Include(o => o.Status)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(o => o.OrderId == id);
+                    if (existingOrder == null)
+                    {
+                        return NotFound();
+                    }
+
                     _context.Update(order);
                     await _context.SaveChangesAsync();
+
+                    var selectedStatus = await _context.OrderStatuses
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.StatusId == order.StatusId);
+
+                    var wasCompleted = IsCompletedStatus(existingOrder.Status?.StatusName);
+                    var isCompleted = IsCompletedStatus(selectedStatus?.StatusName);
+
+                    if (!wasCompleted && isCompleted)
+                    {
+                        await ApplyOrderToStockAsync(order.OrderId);
+                    }
+                    else if (wasCompleted && !isCompleted)
+                    {
+                        await RevertOrderFromStockAsync(order.OrderId);
+                    }
+
                     await RecalculateOrderTotalAsync(order.OrderId, preserveManualWhenNoItems: true);
                     return RedirectToAction(nameof(Index));
                 }
@@ -253,6 +289,64 @@ namespace MaintainingOrdersWeb.Controllers
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.OrderId == id);
+        }
+
+        private bool IsCompletedStatus(string? statusName)
+        {
+            if (string.IsNullOrWhiteSpace(statusName))
+            {
+                return false;
+            }
+
+            var normalized = statusName.Trim().ToLowerInvariant();
+            return normalized.Contains("выполн")
+                || normalized.Contains("заверш")
+                || normalized.Contains("закрыт")
+                || normalized.Contains("достав")
+                || normalized.Contains("complet")
+                || normalized.Contains("done")
+                || normalized.Contains("finish")
+                || normalized.Contains("deliver");
+        }
+
+        private async Task ApplyOrderToStockAsync(int orderId)
+        {
+            var orderItems = await _context.OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .ToListAsync();
+
+            foreach (var item in orderItems)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+                if (product == null)
+                {
+                    continue;
+                }
+
+                product.Remains = Math.Max(0, (product.Remains ?? 0) - item.Quantity);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task RevertOrderFromStockAsync(int orderId)
+        {
+            var orderItems = await _context.OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .ToListAsync();
+
+            foreach (var item in orderItems)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+                if (product == null)
+                {
+                    continue;
+                }
+
+                product.Remains = (product.Remains ?? 0) + item.Quantity;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }
