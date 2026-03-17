@@ -4,11 +4,10 @@
     ViewData["Title"] = "Удаление элемента поставки";
 }
 
-<h1 style="color: #FF6D00;">Удаление элемента поставки</h1>
+<h1 class="form-page-title">Удаление элемента поставки</h1>
 
-<h3>Вы уверены, что хотите удалить этот элемент?</h3>
+<h3 class="delete-confirm-text">Вы уверены, что хотите удалить этот элемент?</h3>
 <div>
-    <hr />
     <dl class="row">
         <dt class="col-sm-2">Поставка (ID)</dt>
         <dd class="col-sm-10">@Html.DisplayFor(model => model.ShipmentId)</dd>
@@ -20,8 +19,8 @@
         <dd class="col-sm-10">@Html.DisplayFor(model => model.PriceAtShipment)</dd>
     </dl>
 
-    <form asp-action="Delete" asp-route-shipmentId="@Model.ShipmentId" asp-route-productId="@Model.ProductId">
-        <input type="submit" value="Удалить" class="btn btn-warning" style="background-color: #FF6D00;" />
+    <form asp-action="Delete" asp-route-shipmentId="@Model.ShipmentId" asp-route-productId="@Model.ProductId" class="delete-form">
+        <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn" />
         <a asp-action="Index" class="btn btn-secondary">Отмена</a>
     </form>
 </div>

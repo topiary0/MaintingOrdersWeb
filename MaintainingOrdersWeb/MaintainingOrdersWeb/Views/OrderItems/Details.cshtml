@@ -4,7 +4,7 @@
     ViewData["Title"] = "Детали позиции заказа";
 }
 
-<h1 style="color: #1976D2;">Детали позиции заказа</h1>
+<h1 class="form-page-title">Детали позиции заказа</h1>
 
 <div>
     <hr />
@@ -22,7 +22,7 @@
 <div>
     @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
     {
-        <a asp-action="Edit" asp-route-orderId="@Model?.OrderId" asp-route-productId="@Model?.ProductId" class="btn btn-primary">Редактировать</a>
+        <a asp-action="Edit" asp-route-orderId="@Model?.OrderId" asp-route-productId="@Model?.ProductId" class="btn btn-primary crud-action-btn">Редактировать</a>
     }
     <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
 </div>
