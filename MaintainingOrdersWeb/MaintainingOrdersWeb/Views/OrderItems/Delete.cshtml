@@ -22,7 +22,7 @@
     <form asp-action="Delete" asp-route-orderId="@Model.OrderId" asp-route-productId="@Model.ProductId" class="delete-form">
         <input type="hidden" asp-for="OrderId" />
         <input type="hidden" asp-for="ProductId" />
-        <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn" />
-        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+        <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn btn-uniform" />
+        <a asp-action="Index" class="btn btn-secondary btn-uniform">Отмена</a>
     </form>
 </div>

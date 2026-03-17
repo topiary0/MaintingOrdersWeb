@@ -97,7 +97,7 @@ namespace MaintainingOrdersWeb.Controllers
                 {
                     _context.Add(order);
                     await _context.SaveChangesAsync();
-                    await RecalculateOrderTotalAsync(order.OrderId);
+                    await RecalculateOrderTotalAsync(order.OrderId, preserveManualWhenNoItems: true);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -151,7 +151,7 @@ namespace MaintainingOrdersWeb.Controllers
                 {
                     _context.Update(order);
                     await _context.SaveChangesAsync();
-                    await RecalculateOrderTotalAsync(order.OrderId);
+                    await RecalculateOrderTotalAsync(order.OrderId, preserveManualWhenNoItems: true);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -228,13 +228,17 @@ namespace MaintainingOrdersWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task RecalculateOrderTotalAsync(int orderId)
+        private async Task RecalculateOrderTotalAsync(int orderId, bool preserveManualWhenNoItems = false)
         {
             var order = await _context.Orders
                 .Include(o => o.Method)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
             if (order == null)
+                return;
+
+            var hasOrderItems = await _context.OrderItems.AnyAsync(oi => oi.OrderId == orderId);
+            if (preserveManualWhenNoItems && !hasOrderItems)
                 return;
 
             var itemsSum = await _context.OrderItems

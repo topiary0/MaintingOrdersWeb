@@ -35,8 +35,8 @@
             <input type="date" class="form-control" name="orderDate" value="@filterDateValue" />
         </div>
         <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">Поиск</button>
-            <a asp-action="Index" class="btn btn-outline-secondary w-100">Сброс</a>
+            <button type="submit" class="btn btn-primary w-100 btn-uniform">Поиск</button>
+            <a asp-action="Index" class="btn btn-outline-secondary w-100 btn-uniform">Сброс</a>
         </div>
     </form>
 </div>
@@ -44,7 +44,7 @@
 @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
 {
     <p>
-        <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать новый заказ</a>
+        <a asp-action="Create" class="btn btn-success btn-uniform" style="background-color: #2E7D32;">Создать новый заказ</a>
     </p>
 }
 <table class="table table-modern">
@@ -77,6 +77,7 @@
                         <a asp-action="Delete" asp-route-id="@item.OrderId" class="btn btn-outline-danger btn-sm crud-action-btn">Удалить</a>
                     }
                     <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-outline-info btn-sm crud-action-btn">Детали</a>
+                    <a asp-controller="OrderItems" asp-action="Index" asp-route-orderId="@item.OrderId" class="btn btn-outline-secondary btn-sm crud-action-btn">Состав</a>
 
                     @if (User.IsInRole("Сотрудник") && item.StatusId != 2)
                     {

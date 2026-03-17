@@ -212,5 +212,24 @@ main table.table tbody td:last-child {
 }
 
 .delete-submit-btn {
-  min-width: 112px;
+  min-width: 132px;
+}
+
+
+.btn-uniform {
+  min-width: 132px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main input[type="submit"],
+main button[type="submit"],
+main a.btn-secondary {
+  min-width: 132px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

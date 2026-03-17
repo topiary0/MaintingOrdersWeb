@@ -17,12 +17,23 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: OrderItems
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? orderId)
         {
             var orderItems = _context.OrderItems
                 .Include(oi => oi.Order)
-                .Include(oi => oi.Product);
-            return View(await orderItems.ToListAsync());
+                .Include(oi => oi.Product)
+                .AsQueryable();
+
+            if (orderId.HasValue)
+            {
+                orderItems = orderItems.Where(oi => oi.OrderId == orderId.Value);
+            }
+
+            ViewBag.FilterOrderId = orderId;
+            return View(await orderItems
+                .OrderBy(oi => oi.OrderId)
+                .ThenBy(oi => oi.Product.Name)
+                .ToListAsync());
         }
 
         // GET: OrderItems/Details?orderId=5&productId=3
