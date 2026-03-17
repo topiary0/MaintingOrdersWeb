@@ -66,6 +66,8 @@ namespace MaintainingOrdersWeb.Controllers
                 {
                     _context.Add(supplyItem);
                     await _context.SaveChangesAsync();
+
+                    await ApplyStockChangeIfShipmentAcceptedAsync(supplyItem.ShipmentId, supplyItem.ProductId, supplyItem.Quantity);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -107,8 +109,19 @@ namespace MaintainingOrdersWeb.Controllers
             {
                 try
                 {
+                    var existingItem = await _context.SupplyItems
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.ShipmentId == shipmentId && s.ProductId == productId);
+
                     _context.Update(supplyItem);
                     await _context.SaveChangesAsync();
+
+                    if (existingItem != null)
+                    {
+                        var delta = supplyItem.Quantity - existingItem.Quantity;
+                        await ApplyStockChangeIfShipmentAcceptedAsync(supplyItem.ShipmentId, supplyItem.ProductId, delta);
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -150,10 +163,55 @@ namespace MaintainingOrdersWeb.Controllers
         {
             var supplyItem = await _context.SupplyItems.FindAsync(shipmentId, productId);
             if (supplyItem != null)
+            {
+                var quantityToSubtract = -supplyItem.Quantity;
                 _context.SupplyItems.Remove(supplyItem);
-
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+                await ApplyStockChangeIfShipmentAcceptedAsync(shipmentId, productId, quantityToSubtract);
+            }
+            else
+            {
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
+        }
+
+
+        private async Task ApplyStockChangeIfShipmentAcceptedAsync(int shipmentId, int productId, int quantityDelta)
+        {
+            if (quantityDelta == 0)
+            {
+                return;
+            }
+
+            var shipment = await _context.Shipments
+                .Include(s => s.Statussh)
+                .FirstOrDefaultAsync(s => s.ShipmentId == shipmentId);
+
+            if (shipment == null || !IsAcceptedStatus(shipment.Statussh?.StatusName ?? shipment.Status))
+            {
+                return;
+            }
+
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            if (product == null)
+            {
+                return;
+            }
+
+            product.Remains = Math.Max(0, (product.Remains ?? 0) + quantityDelta);
+            await _context.SaveChangesAsync();
+        }
+
+        private static bool IsAcceptedStatus(string? statusName)
+        {
+            if (string.IsNullOrWhiteSpace(statusName))
+            {
+                return false;
+            }
+
+            var normalized = statusName.Trim().ToLowerInvariant();
+            return normalized.Contains("прин") || normalized.Contains("выполн") || normalized.Contains("достав");
         }
 
         private bool SupplyItemExists(int shipmentId, int productId)

@@ -22,7 +22,7 @@ namespace MaintainingOrdersWeb.Controllers
             var shipments = _context.Shipments
                 .Include(s => s.Suppliers)
                 .Include(s => s.User)
-                .Include(s => s.Statussh); // навигационное свойство к ShipmentStatus
+                .Include(s => s.Statussh);
             return View(await shipments.ToListAsync());
         }
 
@@ -55,19 +55,30 @@ namespace MaintainingOrdersWeb.Controllers
         [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ShipmentId,ShipmentDate,Status,SuppliersId,UserId,StatusshId")] Shipment shipment)
+        public async Task<IActionResult> Create([Bind("ShipmentId,ShipmentDate,SuppliersId,UserId,StatusshId")] Shipment shipment)
         {
-            // Убираем ошибки навигационных свойств
             ModelState.Remove("Suppliers");
             ModelState.Remove("User");
             ModelState.Remove("Statussh");
+            ModelState.Remove("Status");
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var selectedStatus = await _context.ShipmentStatuses
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.StatusId == shipment.StatusshId);
+                    shipment.Status = selectedStatus?.StatusName;
+
                     _context.Add(shipment);
                     await _context.SaveChangesAsync();
+
+                    if (selectedStatus != null && IsAcceptedStatus(selectedStatus.StatusName))
+                    {
+                        await ApplyShipmentToStockAsync(shipment.ShipmentId);
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -103,20 +114,42 @@ namespace MaintainingOrdersWeb.Controllers
         [Authorize(Roles = "Директор,Менеджер")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ShipmentId,ShipmentDate,Status,SuppliersId,UserId,StatusshId")] Shipment shipment)
+        public async Task<IActionResult> Edit(int id, [Bind("ShipmentId,ShipmentDate,SuppliersId,UserId,StatusshId")] Shipment shipment)
         {
             if (id != shipment.ShipmentId) return NotFound();
 
             ModelState.Remove("Suppliers");
             ModelState.Remove("User");
             ModelState.Remove("Statussh");
+            ModelState.Remove("Status");
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var existingShipment = await _context.Shipments.AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.ShipmentId == id);
+                    if (existingShipment == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var selectedStatus = await _context.ShipmentStatuses
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.StatusId == shipment.StatusshId);
+                    shipment.Status = selectedStatus?.StatusName;
+
+                    var wasAccepted = IsAcceptedStatus(existingShipment.Status);
+                    var isAccepted = IsAcceptedStatus(selectedStatus?.StatusName);
+
                     _context.Update(shipment);
                     await _context.SaveChangesAsync();
+
+                    if (!wasAccepted && isAccepted)
+                    {
+                        await ApplyShipmentToStockAsync(shipment.ShipmentId);
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -173,6 +206,37 @@ namespace MaintainingOrdersWeb.Controllers
         private bool ShipmentExists(int id)
         {
             return _context.Shipments.Any(e => e.ShipmentId == id);
+        }
+
+        private bool IsAcceptedStatus(string? statusName)
+        {
+            if (string.IsNullOrWhiteSpace(statusName))
+            {
+                return false;
+            }
+
+            var normalized = statusName.Trim().ToLowerInvariant();
+            return normalized.Contains("прин") || normalized.Contains("выполн") || normalized.Contains("достав");
+        }
+
+        private async Task ApplyShipmentToStockAsync(int shipmentId)
+        {
+            var supplyItems = await _context.SupplyItems
+                .Where(i => i.ShipmentId == shipmentId)
+                .ToListAsync();
+
+            foreach (var item in supplyItems)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+                if (product == null)
+                {
+                    continue;
+                }
+
+                product.Remains = (product.Remains ?? 0) + item.Quantity;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }
