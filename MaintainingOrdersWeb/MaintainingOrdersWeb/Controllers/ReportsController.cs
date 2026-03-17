@@ -73,7 +73,7 @@ namespace MaintainingOrdersWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Бухгалтер")]
+        [Authorize(Roles = "Директор,Бухгалтер")]
         public async Task<IActionResult> ExportAccountingPdf()
         {
             var quarterStartMonth = ((DateTime.Today.Month - 1) / 3) * 3 + 1;
