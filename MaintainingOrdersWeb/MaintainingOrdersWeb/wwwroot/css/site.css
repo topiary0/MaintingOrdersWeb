@@ -176,3 +176,78 @@ main dl.row {
   border-radius: 14px;
   padding: 1rem !important;
 }
+
+.form-page-title {
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+main table.table tbody td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.crud-action-btn {
+  min-width: 112px;
+  text-align: center;
+  margin: 0 .3rem .3rem 0;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.delete-confirm-text {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.delete-form {
+  margin-top: 1rem;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+}
+
+.delete-submit-btn {
+  min-width: 112px;
+}
+
+.delete-page {
+  max-width: 860px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(247,251,255,.95));
+  border: 1px solid #d7e5ff;
+  border-radius: 16px;
+  padding: 1.1rem;
+  box-shadow: 0 10px 24px rgba(21, 74, 161, 0.1);
+}
+
+.delete-details {
+  background: #fff !important;
+}
+
+main .delete-form,
+main .form-group.mt-3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+main .delete-form .btn,
+main .delete-form input[type="submit"],
+main .form-group.mt-3 .btn,
+main .form-group.mt-3 input[type="submit"],
+main .form-nav-btn {
+  min-width: 146px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main .delete-submit-btn {
+  min-width: 146px;
+}

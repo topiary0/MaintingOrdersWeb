@@ -4,12 +4,11 @@
     ViewData["Title"] = "Удаление клиента";
 }
 
-<h1 style="color: #FF6D00;">Удаление клиента</h1>
+<h1 class="form-page-title">Удаление клиента</h1>
 
-<h3>Вы уверены, что хотите удалить этого клиента?</h3>
-<div>
-    <hr />
-    <dl class="row">
+<h3 class="delete-confirm-text">Вы уверены, что хотите удалить этого клиента?</h3>
+<div class="delete-page">
+    <dl class="row delete-details">
         <dt class="col-sm-2">Наименование</dt>
         <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
         <dt class="col-sm-2">Адрес</dt>
@@ -20,9 +19,9 @@
         <dd class="col-sm-10">@Html.DisplayFor(model => model.ContactPerson)</dd>
     </dl>
 
-    <form asp-action="Delete">
+    <form asp-action="Delete" class="delete-form">
         <input type="hidden" asp-for="ClientId" />
-        <input type="submit" value="Удалить" class="btn btn-warning" style="background-color: #FF6D00;" />
-        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+        <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn" />
+        <a asp-action="Index" class="btn btn-secondary form-nav-btn">Отмена</a>
     </form>
 </div>

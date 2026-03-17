@@ -27,10 +27,10 @@
                 <td>
                     @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.StatusId" style="color: #1976D2;" class="btn btn-outline-primary btn-sm">Редактировать</a>
-                        <a asp-action="Delete" asp-route-id="@item.StatusId" style="color: #FF6D00;" class="btn btn-outline-danger btn-sm">Удалить</a>
+                        <a asp-action="Edit" asp-route-id="@item.StatusId"  class="btn btn-outline-primary btn-sm crud-action-btn">Редактировать</a>
+                        <a asp-action="Delete" asp-route-id="@item.StatusId"  class="btn btn-outline-danger btn-sm crud-action-btn">Удалить</a>
                     }
-                    <a asp-action="Details" asp-route-id="@item.StatusId" style="color: #1976D2;" class="btn btn-outline-info btn-sm">Детали</a>
+                    <a asp-action="Details" asp-route-id="@item.StatusId"  class="btn btn-outline-info btn-sm crud-action-btn">Детали</a>
                 </td>
             </tr>
         }

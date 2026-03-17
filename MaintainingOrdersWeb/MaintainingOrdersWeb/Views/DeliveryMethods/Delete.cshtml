@@ -4,12 +4,11 @@
     ViewData["Title"] = "Удаление способа доставки";
 }
 
-<h1 style="color: #FF6D00;">Удаление способа доставки</h1>
+<h1 class="form-page-title">Удаление способа доставки</h1>
 
-<h3>Вы уверены, что хотите удалить этот способ доставки?</h3>
-<div>
-    <hr />
-    <dl class="row">
+<h3 class="delete-confirm-text">Вы уверены, что хотите удалить этот способ доставки?</h3>
+<div class="delete-page">
+    <dl class="row delete-details">
         <dt class="col-sm-2">Название</dt>
         <dd class="col-sm-10">@Html.DisplayFor(model => model.MethodName)</dd>
         <dt class="col-sm-2">Цена</dt>
@@ -18,9 +17,9 @@
         <dd class="col-sm-10">@Html.DisplayFor(model => model.EstimatedTime)</dd>
     </dl>
 
-    <form asp-action="Delete">
+    <form asp-action="Delete" class="delete-form">
         <input type="hidden" asp-for="MethodId" />
-        <input type="submit" value="Удалить" class="btn btn-warning" style="background-color: #FF6D00;" />
-        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+        <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn" />
+        <a asp-action="Index" class="btn btn-secondary form-nav-btn">Отмена</a>
     </form>
 </div>

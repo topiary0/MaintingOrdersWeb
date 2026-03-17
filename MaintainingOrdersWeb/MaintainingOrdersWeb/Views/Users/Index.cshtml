@@ -26,9 +26,9 @@
                 <td>@Html.DisplayFor(modelItem => item.Login)</td>
                 <td>@Html.DisplayFor(modelItem => item.Role.RoleName)</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.UserId" style="color: #1976D2;" class="btn btn-outline-primary btn-sm">Редактировать</a>
-                    <a asp-action="Details" asp-route-id="@item.UserId" style="color: #1976D2;" class="btn btn-outline-info btn-sm">Детали</a>
-                    <a asp-action="Delete" asp-route-id="@item.UserId" style="color: #FF6D00;" class="btn btn-outline-danger btn-sm">Удалить</a>
+                    <a asp-action="Edit" asp-route-id="@item.UserId"  class="btn btn-outline-primary btn-sm crud-action-btn">Редактировать</a>
+                    <a asp-action="Details" asp-route-id="@item.UserId"  class="btn btn-outline-info btn-sm crud-action-btn">Детали</a>
+                    <a asp-action="Delete" asp-route-id="@item.UserId"  class="btn btn-outline-danger btn-sm crud-action-btn">Удалить</a>
                 </td>
             </tr>
         }
