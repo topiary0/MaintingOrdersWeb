@@ -179,11 +179,6 @@ namespace MaintainingOrdersWeb.Controllers
 
         private async Task ApplyStockChangeIfShipmentAcceptedAsync(int shipmentId, int productId, int quantityDelta)
         {
-            if (quantityDelta == 0)
-            {
-                return;
-            }
-
             var shipment = await _context.Shipments
                 .Include(s => s.Statussh)
                 .FirstOrDefaultAsync(s => s.ShipmentId == shipmentId);
@@ -199,8 +194,43 @@ namespace MaintainingOrdersWeb.Controllers
                 return;
             }
 
-            product.Remains = Math.Max(0, (product.Remains ?? 0) + quantityDelta);
+            if (quantityDelta != 0)
+            {
+                product.Remains = Math.Max(0, (product.Remains ?? 0) + quantityDelta);
+            }
+
+            await RefreshProductPricesAsync(product);
             await _context.SaveChangesAsync();
+        }
+
+        private async Task RefreshProductPricesAsync(Product product)
+        {
+            var latestAcceptedSupply = await _context.SupplyItems
+                .Where(si => si.ProductId == product.ProductId)
+                .Join(
+                    _context.Shipments.Include(sh => sh.Statussh),
+                    si => si.ShipmentId,
+                    sh => sh.ShipmentId,
+                    (si, sh) => new { Supply = si, Shipment = sh })
+                .Where(x => IsAcceptedStatus(x.Shipment.Statussh!.StatusName ?? x.Shipment.Status))
+                .OrderByDescending(x => x.Shipment.ShipmentDate)
+                .ThenByDescending(x => x.Shipment.ShipmentId)
+                .Select(x => (decimal?)x.Supply.PriceAtShipment)
+                .FirstOrDefaultAsync();
+
+            if (!latestAcceptedSupply.HasValue)
+            {
+                return;
+            }
+
+            product.PurchasePrice = latestAcceptedSupply.Value;
+
+            if (!product.SalePrice.HasValue || product.SalePrice.Value <= 0)
+            {
+                product.SalePrice = Math.Round(latestAcceptedSupply.Value * 1.20m, 2);
+            }
+
+            product.Price = product.SalePrice ?? product.Price;
         }
 
         private static bool IsAcceptedStatus(string? statusName)
@@ -211,7 +241,14 @@ namespace MaintainingOrdersWeb.Controllers
             }
 
             var normalized = statusName.Trim().ToLowerInvariant();
-            return normalized.Contains("прин") || normalized.Contains("выполн") || normalized.Contains("достав");
+            return normalized.Contains("прин")
+                || normalized.Contains("приш")
+                || normalized.Contains("выполн")
+                || normalized.Contains("достав")
+                || normalized.Contains("arriv")
+                || normalized.Contains("receiv")
+                || normalized.Contains("complet")
+                || normalized.Contains("deliver");
         }
 
         private bool SupplyItemExists(int shipmentId, int productId)

@@ -76,7 +76,7 @@ namespace MaintainingOrdersWeb.Controllers
 
                     if (selectedStatus != null && IsAcceptedStatus(selectedStatus.StatusName))
                     {
-                        await ApplyShipmentToStockAsync(shipment.ShipmentId);
+                        await ApplyShipmentToStockAndPricesAsync(shipment.ShipmentId);
                     }
 
                     return RedirectToAction(nameof(Index));
@@ -147,7 +147,11 @@ namespace MaintainingOrdersWeb.Controllers
 
                     if (!wasAccepted && isAccepted)
                     {
-                        await ApplyShipmentToStockAsync(shipment.ShipmentId);
+                        await ApplyShipmentToStockAndPricesAsync(shipment.ShipmentId);
+                    }
+                    else if (wasAccepted && !isAccepted)
+                    {
+                        await RevertShipmentFromStockAsync(shipment.ShipmentId);
                     }
 
                     return RedirectToAction(nameof(Index));
@@ -216,10 +220,17 @@ namespace MaintainingOrdersWeb.Controllers
             }
 
             var normalized = statusName.Trim().ToLowerInvariant();
-            return normalized.Contains("прин") || normalized.Contains("выполн") || normalized.Contains("достав");
+            return normalized.Contains("прин")
+                || normalized.Contains("приш")
+                || normalized.Contains("выполн")
+                || normalized.Contains("достав")
+                || normalized.Contains("arriv")
+                || normalized.Contains("receiv")
+                || normalized.Contains("complet")
+                || normalized.Contains("deliver");
         }
 
-        private async Task ApplyShipmentToStockAsync(int shipmentId)
+        private async Task ApplyShipmentToStockAndPricesAsync(int shipmentId)
         {
             var supplyItems = await _context.SupplyItems
                 .Where(i => i.ShipmentId == shipmentId)
@@ -234,6 +245,34 @@ namespace MaintainingOrdersWeb.Controllers
                 }
 
                 product.Remains = (product.Remains ?? 0) + item.Quantity;
+                product.PurchasePrice = item.PriceAtShipment;
+
+                if (!product.SalePrice.HasValue || product.SalePrice.Value <= 0)
+                {
+                    product.SalePrice = Math.Round(item.PriceAtShipment * 1.20m, 2);
+                }
+
+                product.Price = product.SalePrice ?? product.Price;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task RevertShipmentFromStockAsync(int shipmentId)
+        {
+            var supplyItems = await _context.SupplyItems
+                .Where(i => i.ShipmentId == shipmentId)
+                .ToListAsync();
+
+            foreach (var item in supplyItems)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+                if (product == null)
+                {
+                    continue;
+                }
+
+                product.Remains = Math.Max(0, (product.Remains ?? 0) - item.Quantity);
             }
 
             await _context.SaveChangesAsync();
