@@ -52,7 +52,7 @@ namespace MaintainingOrdersWeb.Controllers
         [Authorize(Roles = "Директор,Менеджер")]
         public IActionResult Create()
         {
-            ViewData["OrderId"] = new SelectList(_context.Orders, "OrderId", "OrderId"); // или можно отображать дату+клиента
+            ViewData["OrderId"] = new SelectList(_context.Orders, "OrderId", "OrderId");
             ViewData["ProductId"] = new SelectList(_context.Products, "ProductId", "Name");
             return View();
         }
@@ -63,11 +63,9 @@ namespace MaintainingOrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,ProductId,Quantity,PriceAtOrder")] OrderItem orderItem)
         {
-            // Убираем ошибки навигационных свойств
             ModelState.Remove("Order");
             ModelState.Remove("Product");
 
-            // Проверка на существование такой позиции (уникальность составного ключа)
             if (await _context.OrderItems.AnyAsync(oi => oi.OrderId == orderItem.OrderId && oi.ProductId == orderItem.ProductId))
             {
                 ModelState.AddModelError("", "Такая позиция уже существует в этом заказе.");
@@ -87,6 +85,12 @@ namespace MaintainingOrdersWeb.Controllers
                     _context.Add(orderItem);
                     await _context.SaveChangesAsync();
                     await RecalculateOrderTotalAsync(orderItem.OrderId);
+
+                    if (await IsOrderStockConsumingAsync(orderItem.OrderId))
+                    {
+                        await UpdateProductStockAsync(orderItem.ProductId, -orderItem.Quantity);
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -127,7 +131,6 @@ namespace MaintainingOrdersWeb.Controllers
             ModelState.Remove("Order");
             ModelState.Remove("Product");
 
-            // Проверка уникальности (не должна измениться, но если ключи поменялись – не пропустим)
             if (await _context.OrderItems.AnyAsync(oi => oi.OrderId == orderItem.OrderId && oi.ProductId == orderItem.ProductId && !(oi.OrderId == orderId && oi.ProductId == productId)))
             {
                 ModelState.AddModelError("", "Такая позиция уже существует.");
@@ -137,6 +140,10 @@ namespace MaintainingOrdersWeb.Controllers
             {
                 try
                 {
+                    var existingItem = await _context.OrderItems
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(oi => oi.OrderId == orderId && oi.ProductId == productId);
+
                     if (orderItem.PriceAtOrder <= 0)
                     {
                         var product = await _context.Products.FindAsync(orderItem.ProductId);
@@ -147,6 +154,16 @@ namespace MaintainingOrdersWeb.Controllers
                     _context.Update(orderItem);
                     await _context.SaveChangesAsync();
                     await RecalculateOrderTotalAsync(orderItem.OrderId);
+
+                    if (existingItem != null && await IsOrderStockConsumingAsync(orderItem.OrderId))
+                    {
+                        var quantityDelta = orderItem.Quantity - existingItem.Quantity;
+                        if (quantityDelta != 0)
+                        {
+                            await UpdateProductStockAsync(orderItem.ProductId, -quantityDelta);
+                        }
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -189,11 +206,28 @@ namespace MaintainingOrdersWeb.Controllers
         public async Task<IActionResult> DeleteConfirmed(int orderId, int productId)
         {
             var orderItem = await _context.OrderItems
+                .AsNoTracking()
                 .FirstOrDefaultAsync(oi => oi.OrderId == orderId && oi.ProductId == productId);
-            if (orderItem != null)
-                _context.OrderItems.Remove(orderItem);
 
-            await _context.SaveChangesAsync();
+            if (orderItem != null)
+            {
+                var trackedItem = await _context.OrderItems.FindAsync(orderId, productId);
+                if (trackedItem != null)
+                {
+                    _context.OrderItems.Remove(trackedItem);
+                    await _context.SaveChangesAsync();
+                }
+
+                if (await IsOrderStockConsumingAsync(orderId))
+                {
+                    await UpdateProductStockAsync(productId, orderItem.Quantity);
+                }
+            }
+            else
+            {
+                await _context.SaveChangesAsync();
+            }
+
             await RecalculateOrderTotalAsync(orderId);
             return RedirectToAction(nameof(Index));
         }
@@ -215,6 +249,45 @@ namespace MaintainingOrdersWeb.Controllers
             order.TotalPrice = itemsSum + deliveryCost;
 
             _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<bool> IsOrderStockConsumingAsync(int orderId)
+        {
+            var statusName = await _context.Orders
+                .Where(o => o.OrderId == orderId)
+                .Join(_context.OrderStatuses,
+                    o => o.StatusId,
+                    s => s.StatusId,
+                    (_, s) => s.StatusName)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(statusName))
+            {
+                return false;
+            }
+
+            var normalized = statusName.Trim().ToLowerInvariant();
+            return normalized.Contains("собран")
+                || normalized.Contains("выполн")
+                || normalized.Contains("отгруж")
+                || normalized.Contains("достав")
+                || normalized.Contains("комплект")
+                || normalized.Contains("pack")
+                || normalized.Contains("fulfill")
+                || normalized.Contains("complet")
+                || normalized.Contains("deliver");
+        }
+
+        private async Task UpdateProductStockAsync(int productId, int quantityDelta)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            if (product == null || quantityDelta == 0)
+            {
+                return;
+            }
+
+            product.Remains = Math.Max(0, (product.Remains ?? 0) + quantityDelta);
             await _context.SaveChangesAsync();
         }
 

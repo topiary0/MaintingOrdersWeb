@@ -98,6 +98,7 @@ namespace MaintainingOrdersWeb.Controllers
                     _context.Add(order);
                     await _context.SaveChangesAsync();
                     await RecalculateOrderTotalAsync(order.OrderId, preserveManualWhenNoItems: true);
+                    await ApplyOrderStockIfNeededAsync(order.OrderId, shouldConsumeStock: true);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -149,9 +150,26 @@ namespace MaintainingOrdersWeb.Controllers
             {
                 try
                 {
+                    var existingOrder = await _context.Orders
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(o => o.OrderId == id);
+
                     _context.Update(order);
                     await _context.SaveChangesAsync();
                     await RecalculateOrderTotalAsync(order.OrderId, preserveManualWhenNoItems: true);
+
+                    var wasStockConsuming = await IsOrderStockConsumingAsync(existingOrder?.StatusId);
+                    var isStockConsuming = await IsOrderStockConsumingAsync(order.StatusId);
+
+                    if (!wasStockConsuming && isStockConsuming)
+                    {
+                        await ApplyOrderStockIfNeededAsync(order.OrderId, shouldConsumeStock: true);
+                    }
+                    else if (wasStockConsuming && !isStockConsuming)
+                    {
+                        await ApplyOrderStockIfNeededAsync(order.OrderId, shouldConsumeStock: false);
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -197,9 +215,20 @@ namespace MaintainingOrdersWeb.Controllers
         [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders
+                .AsNoTracking()
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+
             if (order != null)
+            {
+                if (await IsOrderStockConsumingAsync(order.StatusId))
+                {
+                    await ApplyOrderStockIfNeededAsync(order.OrderId, shouldConsumeStock: false);
+                }
+
                 _context.Orders.Remove(order);
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -220,9 +249,15 @@ namespace MaintainingOrdersWeb.Controllers
                 .FirstOrDefaultAsync(s => s.StatusName.ToLower().Contains("собран"));
             if (packedStatus != null)
             {
+                var wasStockConsuming = await IsOrderStockConsumingAsync(order.StatusId);
                 order.StatusId = packedStatus.StatusId;
                 _context.Update(order);
                 await _context.SaveChangesAsync();
+
+                if (!wasStockConsuming)
+                {
+                    await ApplyOrderStockIfNeededAsync(order.OrderId, shouldConsumeStock: true);
+                }
             }
 
             return RedirectToAction(nameof(Index));
@@ -253,6 +288,58 @@ namespace MaintainingOrdersWeb.Controllers
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.OrderId == id);
+        }
+
+        private async Task<bool> IsOrderStockConsumingAsync(int? statusId)
+        {
+            if (!statusId.HasValue)
+            {
+                return false;
+            }
+
+            var statusName = await _context.OrderStatuses
+                .Where(s => s.StatusId == statusId.Value)
+                .Select(s => s.StatusName)
+                .FirstOrDefaultAsync();
+
+            if (string.IsNullOrWhiteSpace(statusName))
+            {
+                return false;
+            }
+
+            var normalized = statusName.Trim().ToLowerInvariant();
+            return normalized.Contains("собран")
+                || normalized.Contains("выполн")
+                || normalized.Contains("отгруж")
+                || normalized.Contains("достав")
+                || normalized.Contains("комплект")
+                || normalized.Contains("pack")
+                || normalized.Contains("fulfill")
+                || normalized.Contains("complet")
+                || normalized.Contains("deliver");
+        }
+
+        private async Task ApplyOrderStockIfNeededAsync(int orderId, bool shouldConsumeStock)
+        {
+            var orderItems = await _context.OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .GroupBy(oi => oi.ProductId)
+                .Select(g => new { ProductId = g.Key, Quantity = g.Sum(x => x.Quantity) })
+                .ToListAsync();
+
+            var sign = shouldConsumeStock ? -1 : 1;
+            foreach (var item in orderItems)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+                if (product == null)
+                {
+                    continue;
+                }
+
+                product.Remains = Math.Max(0, (product.Remains ?? 0) + sign * item.Quantity);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -83,7 +83,7 @@
                     {
                         <form asp-action="MarkAsPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-warning">Собран</button>
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Отметить как собран</button>
                         </form>
                     }
                 </td>

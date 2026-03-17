@@ -199,9 +199,24 @@ namespace MaintainingOrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var shipment = await _context.Shipments.FindAsync(id);
+            var shipment = await _context.Shipments
+                .AsNoTracking()
+                .Include(s => s.Statussh)
+                .FirstOrDefaultAsync(s => s.ShipmentId == id);
+
             if (shipment != null)
-                _context.Shipments.Remove(shipment);
+            {
+                if (IsAcceptedStatus(shipment.Statussh?.StatusName ?? shipment.Status))
+                {
+                    await RevertShipmentFromStockAsync(shipment.ShipmentId);
+                }
+
+                var trackedShipment = await _context.Shipments.FindAsync(id);
+                if (trackedShipment != null)
+                {
+                    _context.Shipments.Remove(trackedShipment);
+                }
+            }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
