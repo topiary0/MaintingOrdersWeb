@@ -1,4 +1,5 @@
 ﻿using MaintainingOrdersWeb.Models;
+using MaintainingOrdersWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,10 +11,12 @@ namespace MaintainingOrdersWeb.Controllers
     public class OrdersController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly DeleteDependencyService _deleteDependencyService;
 
-        public OrdersController(MyDbContext context)
+        public OrdersController(MyDbContext context, DeleteDependencyService deleteDependencyService)
         {
             _context = context;
+            _deleteDependencyService = deleteDependencyService;
         }
 
         // GET: Orders
@@ -226,6 +229,8 @@ namespace MaintainingOrdersWeb.Controllers
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null) return NotFound();
 
+            await ApplyDeleteInfoAsync("Order", id.Value);
+
             return View(order);
         }
 
@@ -235,6 +240,12 @@ namespace MaintainingOrdersWeb.Controllers
         [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var deleteInfo = await _deleteDependencyService.CheckAsync("Order", id);
+            if (!deleteInfo.CanDelete)
+            {
+                TempData["DeleteDependencyWarning"] = deleteInfo.WarningMessage;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
             var order = await _context.Orders.FindAsync(id);
             if (order != null)
                 _context.Orders.Remove(order);
@@ -286,6 +297,14 @@ namespace MaintainingOrdersWeb.Controllers
             var deliveryCost = order.Method?.Price ?? 0m;
             order.TotalPrice = itemsSum + deliveryCost;
             await _context.SaveChangesAsync();
+        }
+
+
+        private async Task ApplyDeleteInfoAsync(string entityName, int id)
+        {
+            var deleteInfo = await _deleteDependencyService.CheckAsync(entityName, id);
+            ViewBag.CanDelete = deleteInfo.CanDelete;
+            ViewBag.DependencyWarning = TempData["DeleteDependencyWarning"] as string ?? deleteInfo.WarningMessage;
         }
 
         private bool OrderExists(int id)

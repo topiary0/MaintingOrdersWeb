@@ -1,4 +1,5 @@
 ﻿using MaintainingOrdersWeb.Models;
+using MaintainingOrdersWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,10 +11,12 @@ namespace MaintainingOrdersWeb.Controllers
     public class UsersController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly DeleteDependencyService _deleteDependencyService;
 
-        public UsersController(MyDbContext context)
+        public UsersController(MyDbContext context, DeleteDependencyService deleteDependencyService)
         {
             _context = context;
+            _deleteDependencyService = deleteDependencyService;
         }
 
         // GET: Users
@@ -126,6 +129,8 @@ namespace MaintainingOrdersWeb.Controllers
                 .FirstOrDefaultAsync(m => m.UserId == id);
             if (user == null) return NotFound();
 
+            await ApplyDeleteInfoAsync("User", id.Value);
+
             return View(user);
         }
 
@@ -134,6 +139,12 @@ namespace MaintainingOrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var deleteInfo = await _deleteDependencyService.CheckAsync("User", id);
+            if (!deleteInfo.CanDelete)
+            {
+                TempData["DeleteDependencyWarning"] = deleteInfo.WarningMessage;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
@@ -141,6 +152,14 @@ namespace MaintainingOrdersWeb.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+
+        private async Task ApplyDeleteInfoAsync(string entityName, int id)
+        {
+            var deleteInfo = await _deleteDependencyService.CheckAsync(entityName, id);
+            ViewBag.CanDelete = deleteInfo.CanDelete;
+            ViewBag.DependencyWarning = TempData["DeleteDependencyWarning"] as string ?? deleteInfo.WarningMessage;
         }
 
         private bool UserExists(int id)

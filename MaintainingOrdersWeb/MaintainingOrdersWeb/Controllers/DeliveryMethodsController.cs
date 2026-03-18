@@ -1,4 +1,5 @@
 ﻿using MaintainingOrdersWeb.Models;
+using MaintainingOrdersWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,12 @@ namespace MaintainingOrdersWeb.Controllers
     public class DeliveryMethodsController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly DeleteDependencyService _deleteDependencyService;
 
-        public DeliveryMethodsController(MyDbContext context)
+        public DeliveryMethodsController(MyDbContext context, DeleteDependencyService deleteDependencyService)
         {
             _context = context;
+            _deleteDependencyService = deleteDependencyService;
         }
 
         // GET: DeliveryMethods
@@ -120,6 +123,8 @@ namespace MaintainingOrdersWeb.Controllers
                 .FirstOrDefaultAsync(m => m.MethodId == id);
             if (deliveryMethod == null) return NotFound();
 
+            await ApplyDeleteInfoAsync("DeliveryMethod", id.Value);
+
             return View(deliveryMethod);
         }
 
@@ -129,6 +134,12 @@ namespace MaintainingOrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var deleteInfo = await _deleteDependencyService.CheckAsync("DeliveryMethod", id);
+            if (!deleteInfo.CanDelete)
+            {
+                TempData["DeleteDependencyWarning"] = deleteInfo.WarningMessage;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
             var isUsed = await _context.Orders.AnyAsync(o => o.MethodId == id);
             if (isUsed)
             {
@@ -142,6 +153,14 @@ namespace MaintainingOrdersWeb.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+
+        private async Task ApplyDeleteInfoAsync(string entityName, int id)
+        {
+            var deleteInfo = await _deleteDependencyService.CheckAsync(entityName, id);
+            ViewBag.CanDelete = deleteInfo.CanDelete;
+            ViewBag.DependencyWarning = TempData["DeleteDependencyWarning"] as string ?? deleteInfo.WarningMessage;
         }
 
         private bool DeliveryMethodExists(int id)

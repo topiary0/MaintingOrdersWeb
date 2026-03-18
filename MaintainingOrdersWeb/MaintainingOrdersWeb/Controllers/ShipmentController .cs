@@ -1,4 +1,5 @@
 ﻿using MaintainingOrdersWeb.Models;
+using MaintainingOrdersWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,10 +11,12 @@ namespace MaintainingOrdersWeb.Controllers
     public class ShipmentController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly DeleteDependencyService _deleteDependencyService;
 
-        public ShipmentController(MyDbContext context)
+        public ShipmentController(MyDbContext context, DeleteDependencyService deleteDependencyService)
         {
             _context = context;
+            _deleteDependencyService = deleteDependencyService;
         }
 
         // GET: Shipment
@@ -190,6 +193,8 @@ namespace MaintainingOrdersWeb.Controllers
                 .FirstOrDefaultAsync(m => m.ShipmentId == id);
             if (shipment == null) return NotFound();
 
+            await ApplyDeleteInfoAsync("Shipment", id.Value);
+
             return View(shipment);
         }
 
@@ -199,6 +204,12 @@ namespace MaintainingOrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var deleteInfo = await _deleteDependencyService.CheckAsync("Shipment", id);
+            if (!deleteInfo.CanDelete)
+            {
+                TempData["DeleteDependencyWarning"] = deleteInfo.WarningMessage;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
             var shipment = await _context.Shipments.FindAsync(id);
             if (shipment != null)
                 _context.Shipments.Remove(shipment);
@@ -210,6 +221,14 @@ namespace MaintainingOrdersWeb.Controllers
         private bool ShipmentExists(int id)
         {
             return _context.Shipments.Any(e => e.ShipmentId == id);
+        }
+
+
+        private async Task ApplyDeleteInfoAsync(string entityName, int id)
+        {
+            var deleteInfo = await _deleteDependencyService.CheckAsync(entityName, id);
+            ViewBag.CanDelete = deleteInfo.CanDelete;
+            ViewBag.DependencyWarning = TempData["DeleteDependencyWarning"] as string ?? deleteInfo.WarningMessage;
         }
 
         private bool IsAcceptedStatus(string? statusName)

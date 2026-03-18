@@ -1,4 +1,5 @@
 ﻿using MaintainingOrdersWeb.Models;
+using MaintainingOrdersWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,12 @@ namespace MaintainingOrdersWeb.Controllers
     public class ShipmentStatusController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly DeleteDependencyService _deleteDependencyService;
 
-        public ShipmentStatusController(MyDbContext context)
+        public ShipmentStatusController(MyDbContext context, DeleteDependencyService deleteDependencyService)
         {
             _context = context;
+            _deleteDependencyService = deleteDependencyService;
         }
 
         // GET: ShipmentStatus
@@ -119,6 +122,8 @@ namespace MaintainingOrdersWeb.Controllers
                 .FirstOrDefaultAsync(m => m.StatusId == id);
             if (shipmentStatus == null) return NotFound();
 
+            await ApplyDeleteInfoAsync("ShipmentStatus", id.Value);
+
             return View(shipmentStatus);
         }
 
@@ -128,12 +133,26 @@ namespace MaintainingOrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var deleteInfo = await _deleteDependencyService.CheckAsync("ShipmentStatus", id);
+            if (!deleteInfo.CanDelete)
+            {
+                TempData["DeleteDependencyWarning"] = deleteInfo.WarningMessage;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
             var shipmentStatus = await _context.ShipmentStatuses.FindAsync(id);
             if (shipmentStatus != null)
                 _context.ShipmentStatuses.Remove(shipmentStatus);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+
+        private async Task ApplyDeleteInfoAsync(string entityName, int id)
+        {
+            var deleteInfo = await _deleteDependencyService.CheckAsync(entityName, id);
+            ViewBag.CanDelete = deleteInfo.CanDelete;
+            ViewBag.DependencyWarning = TempData["DeleteDependencyWarning"] as string ?? deleteInfo.WarningMessage;
         }
 
         private bool ShipmentStatusExists(int id)

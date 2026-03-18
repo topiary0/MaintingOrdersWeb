@@ -1,4 +1,5 @@
 ﻿using MaintainingOrdersWeb.Models;
+using MaintainingOrdersWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,12 @@ namespace MaintainingOrdersWeb.Controllers
     public class ClientsController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly DeleteDependencyService _deleteDependencyService;
 
-        public ClientsController(MyDbContext context)
+        public ClientsController(MyDbContext context, DeleteDependencyService deleteDependencyService)
         {
             _context = context;
+            _deleteDependencyService = deleteDependencyService;
         }
 
         // GET: Clients
@@ -119,6 +122,8 @@ namespace MaintainingOrdersWeb.Controllers
                 .FirstOrDefaultAsync(m => m.ClientId == id);
             if (client == null) return NotFound();
 
+            await ApplyDeleteInfoAsync("Client", id.Value);
+
             return View(client);
         }
 
@@ -128,12 +133,26 @@ namespace MaintainingOrdersWeb.Controllers
         [Authorize(Roles = "Директор,Менеджер")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var deleteInfo = await _deleteDependencyService.CheckAsync("Client", id);
+            if (!deleteInfo.CanDelete)
+            {
+                TempData["DeleteDependencyWarning"] = deleteInfo.WarningMessage;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
             var client = await _context.Clients.FindAsync(id);
             if (client != null)
                 _context.Clients.Remove(client);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+
+        private async Task ApplyDeleteInfoAsync(string entityName, int id)
+        {
+            var deleteInfo = await _deleteDependencyService.CheckAsync(entityName, id);
+            ViewBag.CanDelete = deleteInfo.CanDelete;
+            ViewBag.DependencyWarning = TempData["DeleteDependencyWarning"] as string ?? deleteInfo.WarningMessage;
         }
 
         private bool ClientExists(int id)

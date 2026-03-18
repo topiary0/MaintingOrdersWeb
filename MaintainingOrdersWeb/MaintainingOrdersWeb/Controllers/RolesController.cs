@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintainingOrdersWeb.Models;
+using MaintainingOrdersWeb.Services;
 
 namespace MaintainingOrdersWeb.Controllers
 {
@@ -13,10 +14,12 @@ namespace MaintainingOrdersWeb.Controllers
     public class RolesController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly DeleteDependencyService _deleteDependencyService;
 
-        public RolesController(MyDbContext context)
+        public RolesController(MyDbContext context, DeleteDependencyService deleteDependencyService)
         {
             _context = context;
+            _deleteDependencyService = deleteDependencyService;
         }
 
         // GET: Roles (список всех ролей)
@@ -99,6 +102,8 @@ namespace MaintainingOrdersWeb.Controllers
             var role = await _context.Roles.FirstOrDefaultAsync(m => m.RoleId == id);
             if (role == null) return NotFound();
 
+            await ApplyDeleteInfoAsync("Role", id.Value);
+
             return View(role);
         }
 
@@ -107,11 +112,25 @@ namespace MaintainingOrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var deleteInfo = await _deleteDependencyService.CheckAsync("Role", id);
+            if (!deleteInfo.CanDelete)
+            {
+                TempData["DeleteDependencyWarning"] = deleteInfo.WarningMessage;
+                return RedirectToAction(nameof(Delete), new { id });
+            }
             var role = await _context.Roles.FindAsync(id);
             if (role != null) _context.Roles.Remove(role);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+
+        private async Task ApplyDeleteInfoAsync(string entityName, int id)
+        {
+            var deleteInfo = await _deleteDependencyService.CheckAsync(entityName, id);
+            ViewBag.CanDelete = deleteInfo.CanDelete;
+            ViewBag.DependencyWarning = TempData["DeleteDependencyWarning"] as string ?? deleteInfo.WarningMessage;
         }
 
         private bool RoleExists(int id)

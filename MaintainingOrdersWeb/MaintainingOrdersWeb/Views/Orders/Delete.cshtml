@@ -1,6 +1,7 @@
 ﻿@model MaintainingOrdersWeb.Models.Order
 
 @{
+    var canDelete = ViewBag.CanDelete as bool? ?? true;
     ViewData["Title"] = "Удаление заказа";
 }
 
@@ -8,6 +9,7 @@
 
 <h3 class="delete-confirm-text">Вы уверены, что хотите удалить этот заказ?</h3>
 <div>
+    <partial name="_DeleteDependencyWarning" />
     <dl class="row">
         <dt class="col-sm-2">Дата заказа</dt>
         <dd class="col-sm-10">@Html.DisplayFor(model => model.OrderDate)</dd>
@@ -33,7 +35,14 @@
 
     <form asp-action="Delete" class="delete-form">
         <input type="hidden" asp-for="OrderId" />
-        <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn btn-uniform" />
+        @if (canDelete)
+        {
+            <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn btn-uniform" />
+        }
+        else
+        {
+            <button type="button" class="btn btn-warning delete-submit-btn btn-uniform" disabled>Удаление недоступно</button>
+        }
         <a asp-action="Index" class="btn btn-secondary btn-uniform">Отмена</a>
     </form>
 </div>
