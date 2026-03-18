@@ -233,3 +233,26 @@ main a.btn-secondary {
   align-items: center;
   justify-content: center;
 }
+
+
+.director-settings-form {
+  padding: 1.5rem !important;
+}
+
+.settings-section {
+  background: #f8fbff;
+  border: 1px solid #d8e7ff;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.director-progress {
+  height: 1.2rem;
+  border-radius: 999px;
+  background: #e8f0ff;
+}
+
+.director-progress .progress-bar {
+  background: linear-gradient(90deg, #0f4cb8, #4f9ef6);
+  font-weight: 600;
+}

@@ -2,6 +2,7 @@ using MaintainingOrdersWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MaintainingOrdersWeb.Services;
 using System.Diagnostics;
 
 namespace MaintainingOrdersWeb.Controllers
@@ -10,11 +11,13 @@ namespace MaintainingOrdersWeb.Controllers
     {
         private readonly MyDbContext _context;
         private readonly ILogger<HomeController> _logger;
+        private readonly DirectorSettingsService _directorSettingsService;
 
-        public HomeController(MyDbContext context, ILogger<HomeController> logger)
+        public HomeController(MyDbContext context, ILogger<HomeController> logger, DirectorSettingsService directorSettingsService)
         {
             _context = context;
             _logger = logger;
+            _directorSettingsService = directorSettingsService;
         }
 
         [Authorize]
@@ -23,21 +26,25 @@ namespace MaintainingOrdersWeb.Controllers
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Login == User.Identity!.Name);
-            ViewBag.UserName = user?.FullName ?? User.Identity?.Name;
+            var userName = user?.FullName ?? User.Identity?.Name ?? "Пользователь";
+            ViewBag.UserName = userName;
 
             ViewBag.TotalProducts = await _context.Products.CountAsync();
             ViewBag.TotalClients = await _context.Clients.CountAsync();
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
             ViewBag.TotalRevenue = await _context.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
 
+            var directorSettings = await _directorSettingsService.LoadAsync(userName);
+            ViewBag.DirectorSettings = directorSettings;
 
             var today = DateOnly.FromDateTime(DateTime.Today);
             ViewBag.TodayOrdersCount = await _context.Orders.CountAsync(o => o.OrderDate == today);
             ViewBag.ActiveShipmentsCount = await _context.Shipments.CountAsync();
-            ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Remains <= 10);
+            ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Remains <= directorSettings.LowStockThreshold);
 
             var lowStockProducts = await _context.Products
                 .OrderBy(p => p.Remains)
+                .Where(p => p.Remains <= directorSettings.LowStockThreshold)
                 .Take(7)
                 .ToListAsync();
             ViewBag.LowStockProducts = lowStockProducts;
