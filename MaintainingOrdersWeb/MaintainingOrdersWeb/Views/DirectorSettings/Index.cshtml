@@ -1,0 +1,137 @@
+@model MaintainingOrdersWeb.ViewModels.DirectorSettingsViewModel
+@{
+    ViewData["Title"] = "Настройки директора";
+    dynamic summary = ViewBag.SettingsSummary;
+    var revenueProgress = Model.MonthlyRevenueTarget > 0
+        ? Math.Min(100m, Math.Round(summary.CurrentMonthRevenue / Model.MonthlyRevenueTarget * 100m, 1))
+        : 0m;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="mb-1">Настройки директора</h1>
+        <p class="text-muted mb-0">Управляйте целевыми показателями, параметрами дашборда и приоритетами руководителя.</p>
+    </div>
+    <div class="text-md-end">
+        <div class="role-pill">Директор: @Model.DirectorName</div>
+        <div class="small text-muted mt-2">Последнее сохранение: @Model.UpdatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+    </div>
+</div>
+
+@if (TempData["SettingsSaved"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-title">Пользователей в системе</div><div class="metric-value">@summary.TotalUsers</div></div></div>
+    <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-title">Заказов всего</div><div class="metric-value">@summary.TotalOrders</div></div></div>
+    <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-title">Товаров в каталоге</div><div class="metric-value">@summary.TotalProducts</div></div></div>
+    <div class="col-lg-3 col-md-6"><div class="metric-card"><div class="metric-title">Низкие остатки по порогу</div><div class="metric-value">@summary.LowStockProducts</div></div></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <form asp-action="Index" method="post" class="director-settings-form">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="settings-section mb-4">
+                <h3>Операционные параметры</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="DashboardPeriodDays" class="form-label"></label>
+                        <input asp-for="DashboardPeriodDays" class="form-control" />
+                        <span asp-validation-for="DashboardPeriodDays" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="LowStockThreshold" class="form-label"></label>
+                        <input asp-for="LowStockThreshold" class="form-control" />
+                        <span asp-validation-for="LowStockThreshold" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="MonthlyRevenueTarget" class="form-label"></label>
+                        <input asp-for="MonthlyRevenueTarget" class="form-control" />
+                        <span asp-validation-for="MonthlyRevenueTarget" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="MinimumMarginPercent" class="form-label"></label>
+                        <input asp-for="MinimumMarginPercent" class="form-control" />
+                        <span asp-validation-for="MinimumMarginPercent" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section mb-4">
+                <h3>Параметры интерфейса и контроля</h3>
+                <div class="form-check form-switch mb-3">
+                    <input asp-for="AutoOpenReports" class="form-check-input" />
+                    <label asp-for="AutoOpenReports" class="form-check-label"></label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input asp-for="ShowStockAlertsOnDashboard" class="form-check-input" />
+                    <label asp-for="ShowStockAlertsOnDashboard" class="form-check-label"></label>
+                </div>
+                <div class="form-check form-switch">
+                    <input asp-for="ReceiveDailyDigest" class="form-check-input" />
+                    <label asp-for="ReceiveDailyDigest" class="form-check-label"></label>
+                </div>
+            </div>
+
+            <div class="settings-section mb-4">
+                <h3>Стратегический фокус</h3>
+                <label asp-for="StrategicNotes" class="form-label"></label>
+                <textarea asp-for="StrategicNotes" class="form-control" rows="5" placeholder="Например: усилить работу с ключевыми клиентами и сократить количество товаров с низкой маржей."></textarea>
+                <span asp-validation-for="StrategicNotes" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary">Сохранить настройки</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Вернуться на главную</a>
+                <a asp-controller="Reports" asp-action="Index" class="btn btn-outline-primary">Перейти к отчетам</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="glass-card p-3 mb-4">
+            <h3 class="mb-3">Выполнение плана</h3>
+            <div class="d-flex justify-content-between small text-muted mb-2">
+                <span>Текущая выручка месяца</span>
+                <span>@summary.CurrentMonthRevenue.ToString("N2") ₽ / @Model.MonthlyRevenueTarget.ToString("N2") ₽</span>
+            </div>
+            <div class="progress director-progress mb-3">
+                <div class="progress-bar" role="progressbar" style="width: @revenueProgress%;" aria-valuenow="@revenueProgress" aria-valuemin="0" aria-valuemax="100">@revenueProgress%</div>
+            </div>
+            <ul class="feature-list mb-0 ps-3">
+                <li>Порог низкого остатка: <strong>@Model.LowStockThreshold ед.</strong></li>
+                <li>Период для аналитики: <strong>@Model.DashboardPeriodDays дней</strong></li>
+                <li>Минимальная маржинальность: <strong>@Model.MinimumMarginPercent%</strong></li>
+            </ul>
+        </div>
+
+        <div class="glass-card p-3">
+            <h3 class="mb-3">Что ещё можно добавить</h3>
+            <div class="mini-card mb-3">
+                <strong>1. Центр согласований.</strong>
+                <div class="text-muted small mt-1">Подтверждение крупных скидок, нестандартных поставок и критичных закупок прямо из панели директора.</div>
+            </div>
+            <div class="mini-card mb-3">
+                <strong>2. KPI сотрудников по ролям.</strong>
+                <div class="text-muted small mt-1">Сравнение менеджеров по выручке, логистов — по срокам доставки, склада — по обработке заказов.</div>
+            </div>
+            <div class="mini-card mb-3">
+                <strong>3. ABC/XYZ-анализ товаров.</strong>
+                <div class="text-muted small mt-1">Выявление самых прибыльных и нестабильных позиций для корректировки закупок и цен.</div>
+            </div>
+            <div class="mini-card">
+                <strong>4. План-факт по клиентам.</strong>
+                <div class="text-muted small mt-1">Контроль ключевых клиентов: частота заказов, средний чек, просадка активности и риск оттока.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,6 +1,7 @@
 @using System.Text.Json
 @{
     ViewData["Title"] = "Главная";
+    var directorSettings = ViewBag.DirectorSettings as MaintainingOrdersWeb.ViewModels.DirectorSettingsViewModel;
 }
 
 <div class="hero-panel mb-4">
@@ -15,6 +16,7 @@
             <div class="d-flex gap-2 flex-wrap">
                 <a class="btn btn-sm btn-primary" asp-controller="Reports" asp-action="Index">Отчёты</a>
                 <a class="btn btn-sm btn-outline-primary" asp-controller="Users" asp-action="Index">Пользователи</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-controller="DirectorSettings" asp-action="Index">Настройки</a>
             </div>
         </div>
 
@@ -30,7 +32,21 @@
             <div class="col-md-3"><a class="quick-tile" asp-controller="Shipment" asp-action="Index">Управление поставками</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Clients" asp-action="Index">База клиентов</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Каталог товаров</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="DirectorSettings" asp-action="Index">Настройки директора</a></div>
         </div>
+
+        @if (directorSettings?.ShowStockAlertsOnDashboard == true)
+        {
+            <div class="mini-card mb-3">
+                <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                    <div>
+                        <div class="metric-title">Контроль остатков</div>
+                        <strong>Порог уведомления: @directorSettings.LowStockThreshold ед.</strong>
+                    </div>
+                    <div class="text-muted small">Фокус: @directorSettings.StrategicNotes</div>
+                </div>
+            </div>
+        }
 
         <div class="chart-wrap">
             <canvas id="directorChart"></canvas>
