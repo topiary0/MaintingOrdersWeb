@@ -3,6 +3,7 @@ using System.Globalization;
 using MaintainingOrdersWeb.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using MaintainingOrdersWeb.Services;
 
 var cultureInfo = new CultureInfo("en-US");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
@@ -11,6 +12,7 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<DirectorSettingsService>();
 
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

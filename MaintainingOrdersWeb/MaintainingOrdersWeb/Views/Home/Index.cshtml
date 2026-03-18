@@ -1,6 +1,8 @@
 @using System.Text.Json
 @{
     ViewData["Title"] = "Главная";
+    var directorSettings = ViewBag.DirectorSettings as MaintainingOrdersWeb.ViewModels.DirectorSettingsViewModel;
+    var approvalCenter = ViewBag.DirectorApprovalCenter as MaintainingOrdersWeb.ViewModels.DirectorApprovalCenterViewModel;
 }
 
 <div class="hero-panel mb-4">
@@ -15,6 +17,7 @@
             <div class="d-flex gap-2 flex-wrap">
                 <a class="btn btn-sm btn-primary" asp-controller="Reports" asp-action="Index">Отчёты</a>
                 <a class="btn btn-sm btn-outline-primary" asp-controller="Users" asp-action="Index">Пользователи</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-controller="DirectorSettings" asp-action="Index">Настройки</a>
             </div>
         </div>
 
@@ -32,10 +35,39 @@
             <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Каталог товаров</a></div>
         </div>
 
-        <div class="chart-wrap">
+        @if (directorSettings?.ShowStockAlertsOnDashboard == true)
+        {
+            <div class="mini-card mb-3">
+                <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                    <div>
+                        <div class="metric-title">Контроль остатков</div>
+                        <strong>Порог уведомления: @directorSettings.LowStockThreshold ед.</strong>
+                    </div>
+                    <div class="text-muted small">Фокус: @directorSettings.StrategicNotes</div>
+                </div>
+            </div>
+        }
+
+        <div class="chart-wrap mb-3">
             <canvas id="directorChart"></canvas>
         </div>
     </div>
+
+    @if (approvalCenter != null)
+    {
+        <div class="glass-card p-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h3 class="mb-0">Центр согласований</h3>
+                <a class="btn btn-sm btn-outline-secondary" asp-controller="DirectorSettings" asp-action="Index">Настройки контроля</a>
+            </div>
+            <div class="row g-3">
+                <div class="col-lg-3 col-md-6"><div class="mini-card h-100"><div class="metric-title">Заказы на просмотр</div><div class="metric-value">@approvalCenter.OrdersAwaitingReview</div><a asp-controller="Orders" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">Открыть заказы</a></div></div>
+                <div class="col-lg-3 col-md-6"><div class="mini-card h-100"><div class="metric-title">Низкая маржа</div><div class="metric-value">@approvalCenter.LowMarginProducts</div><a asp-controller="Products" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">Проверить товары</a></div></div>
+                <div class="col-lg-3 col-md-6"><div class="mini-card h-100"><div class="metric-title">Критичные остатки</div><div class="metric-value">@approvalCenter.CriticalStockItems</div><a asp-controller="Products" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">Открыть остатки</a></div></div>
+                <div class="col-lg-3 col-md-6"><div class="mini-card h-100"><div class="metric-title">Поставки с риском</div><div class="metric-value">@approvalCenter.ShipmentsRequiringAttention</div><a asp-controller="Shipment" asp-action="Index" class="btn btn-sm btn-outline-primary mt-3">Проверить поставки</a></div></div>
+            </div>
+        </div>
+    }
 }
 
 @if (User.IsInRole("Менеджер"))

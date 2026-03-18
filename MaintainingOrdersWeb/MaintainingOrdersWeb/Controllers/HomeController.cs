@@ -2,6 +2,8 @@ using MaintainingOrdersWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MaintainingOrdersWeb.Services;
+using MaintainingOrdersWeb.ViewModels;
 using System.Diagnostics;
 
 namespace MaintainingOrdersWeb.Controllers
@@ -10,11 +12,13 @@ namespace MaintainingOrdersWeb.Controllers
     {
         private readonly MyDbContext _context;
         private readonly ILogger<HomeController> _logger;
+        private readonly DirectorSettingsService _directorSettingsService;
 
-        public HomeController(MyDbContext context, ILogger<HomeController> logger)
+        public HomeController(MyDbContext context, ILogger<HomeController> logger, DirectorSettingsService directorSettingsService)
         {
             _context = context;
             _logger = logger;
+            _directorSettingsService = directorSettingsService;
         }
 
         [Authorize]
@@ -23,21 +27,28 @@ namespace MaintainingOrdersWeb.Controllers
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Login == User.Identity!.Name);
-            ViewBag.UserName = user?.FullName ?? User.Identity?.Name;
+            var userName = user?.FullName ?? User.Identity?.Name ?? "Пользователь";
+            ViewBag.UserName = userName;
 
             ViewBag.TotalProducts = await _context.Products.CountAsync();
             ViewBag.TotalClients = await _context.Clients.CountAsync();
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
             ViewBag.TotalRevenue = await _context.Orders.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
 
+            var isDirector = user?.Role?.RoleName == "Директор" || User.IsInRole("Директор");
+            var directorSettings = isDirector
+                ? await _directorSettingsService.LoadAsync(userName)
+                : new DirectorSettingsViewModel { DirectorName = userName, LowStockThreshold = 10, ShowStockAlertsOnDashboard = false };
+            ViewBag.DirectorSettings = directorSettings;
 
             var today = DateOnly.FromDateTime(DateTime.Today);
             ViewBag.TodayOrdersCount = await _context.Orders.CountAsync(o => o.OrderDate == today);
             ViewBag.ActiveShipmentsCount = await _context.Shipments.CountAsync();
-            ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Remains <= 10);
+            ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Remains <= directorSettings.LowStockThreshold);
 
             var lowStockProducts = await _context.Products
                 .OrderBy(p => p.Remains)
+                .Where(p => p.Remains <= directorSettings.LowStockThreshold)
                 .Take(7)
                 .ToListAsync();
             ViewBag.LowStockProducts = lowStockProducts;
@@ -86,7 +97,32 @@ namespace MaintainingOrdersWeb.Controllers
             ViewBag.ShipmentStatusLabels = shipmentStatusStats.Select(x => x.Status).ToList();
             ViewBag.ShipmentStatusCounts = shipmentStatusStats.Select(x => x.Count).ToList();
 
+            if (isDirector)
+            {
+                ViewBag.DirectorApprovalCenter = await BuildDirectorApprovalCenterAsync(directorSettings);
+            }
+
             return View();
+        }
+
+        private async Task<DirectorApprovalCenterViewModel> BuildDirectorApprovalCenterAsync(DirectorSettingsViewModel settings)
+        {
+            return new DirectorApprovalCenterViewModel
+            {
+                OrdersAwaitingReview = await _context.Orders
+                    .Include(o => o.Status)
+                    .CountAsync(o => EF.Functions.Like(o.Status.StatusName, "%нов%")
+                                  || EF.Functions.Like(o.Status.StatusName, "%соглас%")),
+                LowMarginProducts = await _context.Products
+                    .CountAsync(p => p.SalePrice > 0
+                                  && ((p.SalePrice - p.PurchasePrice) / p.SalePrice) * 100 < settings.MinimumMarginPercent),
+                CriticalStockItems = await _context.Products
+                    .CountAsync(p => p.Remains <= settings.LowStockThreshold),
+                ShipmentsRequiringAttention = await _context.Shipments
+                    .Include(s => s.Statussh)
+                    .CountAsync(s => EF.Functions.Like(s.Statussh.StatusName, "%ожид%")
+                                  || EF.Functions.Like(s.Statussh.StatusName, "%задерж%"))
+            };
         }
 
         public IActionResult Privacy() => View();
