@@ -265,3 +265,15 @@ main a.btn-secondary {
   color: #7a5700;
   margin-bottom: 1rem;
 }
+
+
+.orders-toolbar-actions .btn {
+  min-width: 140px;
+}
+
+.orders-hint {
+  background: #f8fbff;
+  border: 1px dashed #cbdcff;
+  border-radius: 12px;
+  padding: .85rem 1rem;
+}

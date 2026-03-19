@@ -20,7 +20,15 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders
-        public async Task<IActionResult> Index(int? orderId, int? clientId, DateOnly? orderDate)
+        public async Task<IActionResult> Index(
+            int? orderId,
+            int? clientId,
+            int? statusId,
+            int? methodId,
+            DateOnly? orderDate,
+            decimal? minTotal,
+            string? search,
+            string? sortOrder)
         {
             var ordersQuery = _context.Orders
                 .Include(o => o.Status)
@@ -39,20 +47,69 @@ namespace MaintainingOrdersWeb.Controllers
                 ordersQuery = ordersQuery.Where(o => o.ClientId == clientId.Value);
             }
 
+            if (statusId.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.StatusId == statusId.Value);
+            }
+
+            if (methodId.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.MethodId == methodId.Value);
+            }
+
             if (orderDate.HasValue)
             {
                 ordersQuery = ordersQuery.Where(o => o.OrderDate == orderDate.Value);
             }
 
+            if (minTotal.HasValue)
+            {
+                ordersQuery = ordersQuery.Where(o => o.TotalPrice >= minTotal.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var normalizedSearch = search.Trim();
+                ordersQuery = ordersQuery.Where(o =>
+                    o.Client.Name.Contains(normalizedSearch) ||
+                    (o.DeliveryAddress != null && o.DeliveryAddress.Contains(normalizedSearch)) ||
+                    o.Status.StatusName.Contains(normalizedSearch));
+            }
+
+            ordersQuery = sortOrder switch
+            {
+                "price_desc" => ordersQuery.OrderByDescending(o => o.TotalPrice).ThenByDescending(o => o.OrderDate),
+                "price_asc" => ordersQuery.OrderBy(o => o.TotalPrice).ThenByDescending(o => o.OrderDate),
+                "date_asc" => ordersQuery.OrderBy(o => o.OrderDate).ThenBy(o => o.OrderId),
+                _ => ordersQuery.OrderByDescending(o => o.OrderDate).ThenByDescending(o => o.OrderId)
+            };
+
             ViewBag.FilterOrderId = orderId;
             ViewBag.FilterClientId = clientId;
+            ViewBag.FilterStatusId = statusId;
+            ViewBag.FilterMethodId = methodId;
             ViewBag.FilterOrderDate = orderDate;
+            ViewBag.FilterMinTotal = minTotal;
+            ViewBag.FilterSearch = search;
+            ViewBag.FilterSortOrder = sortOrder;
             ViewBag.Clients = await _context.Clients
                 .OrderBy(c => c.Name)
                 .Select(c => new { c.ClientId, c.Name })
                 .ToListAsync();
+            ViewBag.Statuses = await _context.OrderStatuses
+                .OrderBy(s => s.StatusName)
+                .Select(s => new { s.StatusId, s.StatusName })
+                .ToListAsync();
+            ViewBag.Methods = await _context.DeliveryMethods
+                .OrderBy(m => m.MethodName)
+                .Select(m => new { m.MethodId, m.MethodName })
+                .ToListAsync();
 
-            return View(await ordersQuery.OrderByDescending(o => o.OrderDate).ToListAsync());
+            ViewBag.FilteredOrdersCount = await ordersQuery.CountAsync();
+            ViewBag.FilteredTotalRevenue = await ordersQuery.SumAsync(o => (decimal?)o.TotalPrice) ?? 0m;
+            ViewBag.AverageOrderTotal = await ordersQuery.AverageAsync(o => (decimal?)o.TotalPrice) ?? 0m;
+
+            return View(await ordersQuery.ToListAsync());
         }
 
         // GET: Orders/Details/5
