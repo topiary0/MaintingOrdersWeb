@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MaintainingOrdersWeb.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="@(ViewData["AuthPage"] as bool? == true ? "auth-page-body" : string.Empty)">
+@if (ViewData["AuthPage"] as bool? != true)
+{
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar mb-4">
         <div class="container-fluid">
@@ -86,12 +88,13 @@
         </div>
     </nav>
 </header>
-<div class="container pb-4">
+}
+<div class="@(ViewData["AuthPage"] as bool? == true ? "auth-page-container" : "container pb-4")">
     <main role="main">
         @RenderBody()
     </main>
 </div>
-@if (User.Identity?.IsAuthenticated == true)
+@if (User.Identity?.IsAuthenticated == true && ViewData["AuthPage"] as bool? != true)
 {
     <button type="button" class="btn btn-light global-back-btn" onclick="window.history.back();">← Назад</button>
 }

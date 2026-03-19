@@ -1,26 +1,84 @@
 @{
     ViewData["Title"] = "Авторизация";
+    ViewData["AuthPage"] = true;
 }
 
-<div class="access-denied-card" style="max-width:520px;">
-    <h2 class="mb-3">Вход в систему</h2>
-    <p class="text-muted">Управление оптовыми заказами для розничной аптечной сети.</p>
+<div class="login-shell">
+    <div class="login-background">
+        <div class="login-orb login-orb-one"></div>
+        <div class="login-orb login-orb-two"></div>
+        <div class="login-grid"></div>
+    </div>
 
-    <form method="post" class="mt-4">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="mb-3">
-            <label class="form-label">Логин</label>
-            <input type="text" name="login" class="form-control" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Пароль</label>
-            <input type="password" name="password" class="form-control" required />
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Войти</button>
-    </form>
+    <section class="login-hero">
+        <div class="login-badge">Добро пожаловать</div>
+        <h1>Платформа управления оптовыми заказами для аптечной сети</h1>
+        <p class="login-hero-text">
+            Следите за заказами, поставками и аналитикой в одном месте.
+            Быстрый доступ к ключевым процессам, статусам и отчетам команды.
+        </p>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger mt-3 mb-0">@ViewBag.Error</div>
-    }
+        <div class="login-feature-list">
+            <div class="login-feature-card">
+                <span class="login-feature-icon">✦</span>
+                <div>
+                    <strong>Единое рабочее пространство</strong>
+                    <p>Заказы, клиенты, поставки и документы синхронизированы в одном интерфейсе.</p>
+                </div>
+            </div>
+            <div class="login-feature-card">
+                <span class="login-feature-icon">↗</span>
+                <div>
+                    <strong>Быстрая навигация</strong>
+                    <p>Открывайте нужные разделы за пару кликов и отслеживайте текущие статусы без задержек.</p>
+                </div>
+            </div>
+            <div class="login-feature-card">
+                <span class="login-feature-icon">✓</span>
+                <div>
+                    <strong>Безопасный вход</strong>
+                    <p>Доступ к системе получают только сотрудники с назначенными ролями и правами.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="login-panel">
+        <div class="login-card">
+            <div class="login-card-glow"></div>
+            <div class="login-card-content">
+                <div class="login-card-header">
+                    <span class="login-kicker">С возвращением</span>
+                    <h2>Вход в систему</h2>
+                    <p>Введите логин и пароль, чтобы продолжить работу с заказами и поставками.</p>
+                </div>
+
+                <form method="post" class="login-form">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                    <label class="login-label">
+                        <span>Логин</span>
+                        <input type="text" name="login" class="form-control login-input" placeholder="Введите логин" required />
+                    </label>
+
+                    <label class="login-label">
+                        <span>Пароль</span>
+                        <input type="password" name="password" class="form-control login-input" placeholder="Введите пароль" required />
+                    </label>
+
+                    <div class="login-meta">
+                        <span>Доступ только для сотрудников компании</span>
+                        <span class="login-status-dot"></span>
+                    </div>
+
+                    <button type="submit" class="btn login-submit-btn w-100">Войти</button>
+                </form>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger login-error mb-0 mt-3">@ViewBag.Error</div>
+                }
+            </div>
+        </div>
+    </section>
 </div>
