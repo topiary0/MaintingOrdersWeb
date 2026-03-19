@@ -4,15 +4,75 @@
     var directorSettings = ViewBag.DirectorSettings as MaintainingOrdersWeb.ViewModels.DirectorSettingsViewModel;
 }
 
-<div class="hero-panel mb-4">
-    <h1 class="mb-0">Добро пожаловать, @ViewBag.UserName</h1>
+<div class="dashboard-hero mb-4">
+    <div class="dashboard-pattern dashboard-pattern-left"></div>
+    <div class="dashboard-pattern dashboard-pattern-right"></div>
+
+    <div class="dashboard-hero__content">
+        <div>
+            <div class="role-pill mb-3">Панель управления</div>
+            <h1 class="dashboard-hero__title">Добро пожаловать, @ViewBag.UserName</h1>
+            <p class="dashboard-hero__subtitle mb-0">
+                Здесь собраны ключевые показатели, быстрые переходы и рабочие сценарии для вашей роли.
+            </p>
+        </div>
+
+        <div class="dashboard-hero__quickstats">
+            <div class="dashboard-badge">
+                <span class="dashboard-badge__label">Заказов</span>
+                <strong>@ViewBag.TotalOrders</strong>
+            </div>
+            <div class="dashboard-badge">
+                <span class="dashboard-badge__label">Сегодня</span>
+                <strong>@ViewBag.TodayOrdersCount</strong>
+            </div>
+            <div class="dashboard-badge">
+                <span class="dashboard-badge__label">Выручка</span>
+                <strong>@(ViewBag.TotalRevenue?.ToString("N0") ?? "0") ₽</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-overview row g-3 mb-4">
+    <div class="col-lg-4 col-md-6">
+        <div class="overview-card overview-card--primary">
+            <div class="overview-card__icon">📦</div>
+            <div>
+                <div class="overview-card__title">Заказы и исполнение</div>
+                <div class="overview-card__text">Быстрый переход к заказам, составам и текущим статусам обработки.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="overview-card overview-card--accent">
+            <div class="overview-card__icon">🚚</div>
+            <div>
+                <div class="overview-card__title">Логистика и доставка</div>
+                <div class="overview-card__text">Контроль поставок, маршрутов и способов доставки в одной рабочей зоне.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+        <div class="overview-card overview-card--soft">
+            <div class="overview-card__icon">📊</div>
+            <div>
+                <div class="overview-card__title">Метрики и отчёты</div>
+                <div class="overview-card__text">Следите за выручкой, активностью и узкими местами по данным панели.</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @if (User.IsInRole("Директор"))
 {
-    <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">Панель директора</h3>
+    <div class="glass-card dashboard-section p-3 mb-4">
+        <div class="dashboard-section__pattern"></div>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 dashboard-section__header">
+            <div>
+                <h3 class="mb-1">Панель директора</h3>
+                <div class="text-muted">Финансовая картина, ключевые направления и управленческие действия.</div>
+            </div>
             <div class="d-flex gap-2 flex-wrap">
                 <a class="btn btn-sm btn-primary" asp-controller="Reports" asp-action="Index">Отчёты</a>
                 <a class="btn btn-sm btn-outline-primary" asp-controller="Users" asp-action="Index">Пользователи</a>
@@ -20,14 +80,14 @@
             </div>
         </div>
 
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-3">
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов сегодня</div><div class="metric-value">@ViewBag.TodayOrdersCount</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Клиенты</div><div class="metric-value">@ViewBag.TotalClients</div></div></div>
         </div>
 
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-3">
             <div class="col-md-3"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Управление заказами</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Shipment" asp-action="Index">Управление поставками</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Clients" asp-action="Index">База клиентов</a></div>
@@ -36,7 +96,7 @@
 
         @if (directorSettings?.ShowStockAlertsOnDashboard == true)
         {
-            <div class="mini-card mb-3">
+            <div class="mini-card mb-3 dashboard-note-card">
                 <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
                     <div>
                         <div class="metric-title">Контроль остатков</div>
@@ -51,21 +111,24 @@
             <canvas id="directorChart"></canvas>
         </div>
     </div>
-
 }
 
 @if (User.IsInRole("Менеджер"))
 {
-    <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">Панель менеджера</h3>
+    <div class="glass-card dashboard-section p-3 mb-4">
+        <div class="dashboard-section__pattern"></div>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 dashboard-section__header">
+            <div>
+                <h3 class="mb-1">Панель менеджера</h3>
+                <div class="text-muted">Операционные действия, клиенты и ежедневное управление заказами.</div>
+            </div>
             <div class="d-flex gap-2 flex-wrap">
                 <a class="btn btn-sm btn-primary" asp-controller="Orders" asp-action="Create">Новый заказ</a>
                 <a class="btn btn-sm btn-outline-primary" asp-controller="Shipment" asp-action="Create">Новая поставка</a>
             </div>
         </div>
 
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-3">
             <div class="col-md-2"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Реестр заказов</a></div>
             <div class="col-md-2"><a class="quick-tile" asp-controller="Clients" asp-action="Create">Добавить клиента</a></div>
             <div class="col-md-2"><a class="quick-tile" asp-controller="Suppliers" asp-action="Index">Поставщики</a></div>
@@ -82,13 +145,17 @@
 
 @if (User.IsInRole("Логист"))
 {
-    <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">Панель логиста</h3>
+    <div class="glass-card dashboard-section p-3 mb-4">
+        <div class="dashboard-section__pattern"></div>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 dashboard-section__header">
+            <div>
+                <h3 class="mb-1">Панель логиста</h3>
+                <div class="text-muted">Маршруты, доставка и контроль связанных заказов.</div>
+            </div>
             <a class="btn btn-sm btn-outline-primary" asp-controller="DeliveryMethods" asp-action="Index">Способы доставки</a>
         </div>
 
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-3">
             <div class="col-md-3"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Заказы к доставке</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Остатки товаров</a></div>
@@ -103,13 +170,17 @@
 
 @if (User.IsInRole("Сотрудник"))
 {
-    <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">Панель склада</h3>
+    <div class="glass-card dashboard-section p-3 mb-4">
+        <div class="dashboard-section__pattern"></div>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 dashboard-section__header">
+            <div>
+                <h3 class="mb-1">Панель склада</h3>
+                <div class="text-muted">Приоритеты по остаткам и задачам на текущую смену.</div>
+            </div>
             <a class="btn btn-sm btn-primary" asp-controller="Orders" asp-action="Index">В работу</a>
         </div>
 
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-3">
             <div class="col-md-4"><div class="metric-card"><div class="metric-title">Низкие остатки</div><div class="metric-value">@ViewBag.LowStockCount</div></div></div>
             <div class="col-md-4"><div class="metric-card"><div class="metric-title">Заказы сегодня</div><div class="metric-value">@ViewBag.TodayOrdersCount</div></div></div>
             <div class="col-md-4"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
@@ -123,13 +194,17 @@
 
 @if (User.IsInRole("Бухгалтер"))
 {
-    <div class="glass-card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">Панель бухгалтера</h3>
+    <div class="glass-card dashboard-section p-3 mb-4">
+        <div class="dashboard-section__pattern"></div>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 dashboard-section__header">
+            <div>
+                <h3 class="mb-1">Панель бухгалтера</h3>
+                <div class="text-muted">Финансовые показатели, отчёты и динамика выручки.</div>
+            </div>
             <a class="btn btn-sm btn-primary" asp-controller="Reports" asp-action="Index">Отчётность и PDF</a>
         </div>
 
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-3">
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Поставок</div><div class="metric-value">@ViewBag.ActiveShipmentsCount</div></div></div>

@@ -265,3 +265,204 @@ main a.btn-secondary {
   color: #7a5700;
   margin-bottom: 1rem;
 }
+
+
+.orders-toolbar-actions .btn {
+  min-width: 140px;
+}
+
+.orders-hint {
+  background: #f8fbff;
+  border: 1px dashed #cbdcff;
+  border-radius: 12px;
+  padding: .85rem 1rem;
+}
+
+.dashboard-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.95), rgba(255,255,255,0.78) 38%, rgba(224,238,255,0.76) 100%),
+    linear-gradient(135deg, #0f4cb8 0%, #4f9ef6 55%, #b9d8ff 100%);
+  border: 1px solid rgba(120, 166, 236, 0.35);
+  box-shadow: 0 18px 40px rgba(18, 69, 153, 0.18);
+}
+
+.dashboard-hero__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-hero__title {
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  margin-bottom: .75rem;
+  color: #0d2f68 !important;
+}
+
+.dashboard-hero__subtitle {
+  max-width: 640px;
+  font-size: 1.02rem;
+  color: #355786;
+}
+
+.dashboard-pattern {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: .75;
+}
+
+.dashboard-pattern-left {
+  width: 260px;
+  height: 260px;
+  top: -110px;
+  left: -70px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.55) 0 18%, transparent 19% 100%),
+    radial-gradient(circle at center, rgba(162, 204, 255, 0.55), rgba(162, 204, 255, 0.05) 68%, transparent 69%);
+}
+
+.dashboard-pattern-right {
+  width: 320px;
+  height: 320px;
+  right: -90px;
+  bottom: -150px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.42) 0 14%, transparent 15% 100%),
+    radial-gradient(circle at center, rgba(51, 123, 234, 0.24), rgba(51, 123, 234, 0.06) 72%, transparent 73%);
+}
+
+.dashboard-hero__quickstats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(110px, 1fr));
+  gap: .75rem;
+  min-width: min(100%, 420px);
+}
+
+.dashboard-badge {
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(164, 196, 244, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+  color: #173f7a;
+}
+
+.dashboard-badge strong {
+  display: block;
+  font-size: 1.2rem;
+}
+
+.dashboard-badge__label {
+  display: block;
+  margin-bottom: .25rem;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #5879ad;
+}
+
+.dashboard-overview {
+  position: relative;
+}
+
+.overview-card {
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 1.15rem;
+  border-radius: 22px;
+  border: 1px solid rgba(133, 174, 236, 0.28);
+  box-shadow: 0 12px 28px rgba(27, 78, 163, 0.08);
+}
+
+.overview-card--primary {
+  background: linear-gradient(135deg, rgba(233,243,255,0.96), rgba(247,250,255,0.92));
+}
+
+.overview-card--accent {
+  background: linear-gradient(135deg, rgba(239,245,255,0.96), rgba(232,247,255,0.92));
+}
+
+.overview-card--soft {
+  background: linear-gradient(135deg, rgba(245,247,255,0.96), rgba(239,246,255,0.92));
+}
+
+.overview-card__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(255,255,255,0.7);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+.overview-card__title {
+  font-weight: 700;
+  color: #1c4e9f;
+  margin-bottom: .35rem;
+}
+
+.overview-card__text {
+  color: #4b699b;
+  line-height: 1.45;
+}
+
+.dashboard-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-section__header,
+.dashboard-section .row,
+.dashboard-section .chart-wrap,
+.dashboard-section .mini-card {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-section__pattern {
+  position: absolute;
+  inset: auto -40px -40px auto;
+  width: 180px;
+  height: 180px;
+  border-radius: 24px;
+  transform: rotate(18deg);
+  background:
+    linear-gradient(135deg, rgba(79, 158, 246, 0.12), rgba(15, 76, 184, 0.03)),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.18) 0 10px, transparent 10px 20px);
+}
+
+.dashboard-note-card {
+  background: linear-gradient(135deg, #f7fbff, #edf5ff);
+}
+
+@media (max-width: 767.98px) {
+  .dashboard-hero {
+    padding: 1.5rem;
+    border-radius: 22px;
+  }
+
+  .dashboard-hero__quickstats {
+    grid-template-columns: 1fr;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dashboard-pattern-right {
+    right: -120px;
+    bottom: -170px;
+  }
+}
