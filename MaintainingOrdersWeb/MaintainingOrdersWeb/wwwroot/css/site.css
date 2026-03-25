@@ -67,6 +67,16 @@ body {
   font-weight: 700;
 }
 
+
+.dashboard-panel-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 1rem 1.25rem !important;
+  border-radius: 12px;
+}
+
 /* CRUD pages visual refresh */
 main h1 {
   color: #114a9f !important;
