@@ -180,11 +180,51 @@
                     <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-outline-info btn-sm crud-action-btn">Детали</a>
                     <a asp-controller="OrderItems" asp-action="Index" asp-route-orderId="@item.OrderId" class="btn btn-outline-secondary btn-sm crud-action-btn">Состав</a>
 
-                    @if (User.IsInRole("Сотрудник") && item.StatusId != 2)
+                    @if (User.IsInRole("Сотрудник"))
                     {
-                        <form asp-action="MarkAsPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
+                        <form asp-action="ConfirmPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-warning">Собран</button>
+                            <input type="hidden" name="isPacked" value="true" />
+                            <button type="submit" class="btn btn-sm btn-outline-success crud-action-btn">Подтвердить: собран</button>
+                        </form>
+                        <form asp-action="ConfirmPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="isPacked" value="false" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary crud-action-btn">Подтвердить: не собран</button>
+                        </form>
+                    }
+
+                    @if (User.IsInRole("Логист"))
+                    {
+                        <form asp-action="UpdateLogistics" asp-route-id="@item.OrderId" method="post" class="d-flex flex-wrap gap-2 mt-2 align-items-center">
+                            @Html.AntiForgeryToken()
+                            <select name="statusId" class="form-select form-select-sm" style="min-width: 170px;">
+                                @foreach (var status in ViewBag.Statuses)
+                                {
+                                    if (item.StatusId == status.StatusId)
+                                    {
+                                        <option value="@status.StatusId" selected>@status.StatusName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@status.StatusId">@status.StatusName</option>
+                                    }
+                                }
+                            </select>
+                            <select name="methodId" class="form-select form-select-sm" style="min-width: 170px;">
+                                @foreach (var method in ViewBag.Methods)
+                                {
+                                    if (item.MethodId == method.MethodId)
+                                    {
+                                        <option value="@method.MethodId" selected>@method.MethodName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@method.MethodId">@method.MethodName</option>
+                                    }
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary crud-action-btn">Обновить логистику</button>
                         </form>
                     }
                 </td>

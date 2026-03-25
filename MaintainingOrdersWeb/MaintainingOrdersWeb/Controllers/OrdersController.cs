@@ -314,7 +314,7 @@ namespace MaintainingOrdersWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Сотрудник,Директор")]
-        public async Task<IActionResult> MarkAsPacked(int id)
+        public async Task<IActionResult> ConfirmPacked(int id, bool isPacked)
         {
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
@@ -322,15 +322,77 @@ namespace MaintainingOrdersWeb.Controllers
                 return NotFound();
             }
 
-            var packedStatus = await _context.OrderStatuses
-                .FirstOrDefaultAsync(s => s.StatusName.ToLower().Contains("собран"));
-            if (packedStatus != null)
+            var targetStatus = await ResolvePackedConfirmationStatusAsync(isPacked, order.StatusId);
+            if (targetStatus != null && targetStatus.StatusId != order.StatusId)
             {
-                order.StatusId = packedStatus.StatusId;
+                var previousStatus = await _context.OrderStatuses
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.StatusId == order.StatusId);
+
+                var wasCompleted = IsCompletedStatus(previousStatus?.StatusName);
+                var isCompleted = IsCompletedStatus(targetStatus.StatusName);
+
+                order.StatusId = targetStatus.StatusId;
                 _context.Update(order);
                 await _context.SaveChangesAsync();
+
+                if (!wasCompleted && isCompleted)
+                {
+                    await ApplyOrderToStockAsync(order.OrderId);
+                }
+                else if (wasCompleted && !isCompleted)
+                {
+                    await RevertOrderFromStockAsync(order.OrderId);
+                }
             }
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Логист,Директор")]
+        public async Task<IActionResult> UpdateLogistics(int id, int statusId, int methodId)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var selectedStatus = await _context.OrderStatuses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.StatusId == statusId);
+            var selectedMethod = await _context.DeliveryMethods
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.MethodId == methodId);
+            if (selectedStatus == null || selectedMethod == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var previousStatus = await _context.OrderStatuses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.StatusId == order.StatusId);
+
+            var wasCompleted = IsCompletedStatus(previousStatus?.StatusName);
+            var isCompleted = IsCompletedStatus(selectedStatus.StatusName);
+
+            order.StatusId = statusId;
+            order.MethodId = methodId;
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+
+            if (!wasCompleted && isCompleted)
+            {
+                await ApplyOrderToStockAsync(order.OrderId);
+            }
+            else if (wasCompleted && !isCompleted)
+            {
+                await RevertOrderFromStockAsync(order.OrderId);
+            }
+
+            await RecalculateOrderTotalAsync(order.OrderId, preserveManualWhenNoItems: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -424,6 +486,31 @@ namespace MaintainingOrdersWeb.Controllers
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private async Task<OrderStatus?> ResolvePackedConfirmationStatusAsync(bool isPacked, int currentStatusId)
+        {
+            var statuses = await _context.OrderStatuses
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (isPacked)
+            {
+                return statuses.FirstOrDefault(s =>
+                    !string.IsNullOrWhiteSpace(s.StatusName)
+                    && s.StatusName.Trim().ToLowerInvariant().Contains("собран"));
+            }
+
+            return statuses.FirstOrDefault(s =>
+                       !string.IsNullOrWhiteSpace(s.StatusName)
+                       && s.StatusName.Trim().ToLowerInvariant().Contains("не собран"))
+                   ?? statuses.FirstOrDefault(s =>
+                       !string.IsNullOrWhiteSpace(s.StatusName)
+                       && s.StatusName.Trim().ToLowerInvariant().Contains("нов"))
+                   ?? statuses.FirstOrDefault(s =>
+                       !string.IsNullOrWhiteSpace(s.StatusName)
+                       && s.StatusName.Trim().ToLowerInvariant().Contains("обработ"))
+                   ?? statuses.FirstOrDefault(s => s.StatusId != currentStatusId);
         }
     }
 }
