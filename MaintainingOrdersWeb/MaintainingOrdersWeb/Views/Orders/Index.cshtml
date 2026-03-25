@@ -180,20 +180,6 @@
                     <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-outline-info btn-sm crud-action-btn">Детали</a>
                     <a asp-controller="OrderItems" asp-action="Index" asp-route-orderId="@item.OrderId" class="btn btn-outline-secondary btn-sm crud-action-btn">Состав</a>
 
-                    @if (User.IsInRole("Сотрудник"))
-                    {
-                        <form asp-action="ConfirmPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="isPacked" value="true" />
-                            <button type="submit" class="btn btn-sm btn-outline-success crud-action-btn">Подтвердить: собран</button>
-                        </form>
-                        <form asp-action="ConfirmPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="isPacked" value="false" />
-                            <button type="submit" class="btn btn-sm btn-outline-secondary crud-action-btn">Подтвердить: не собран</button>
-                        </form>
-                    }
-
                     @if (User.IsInRole("Логист"))
                     {
                         <form asp-action="UpdateLogistics" asp-route-id="@item.OrderId" method="post" class="d-flex flex-wrap gap-2 mt-2 align-items-center">

@@ -14,7 +14,7 @@
     </div>
 }
 
-@if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
+@if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Сотрудник"))
 {
     <p>
         <a asp-action="Create" class="btn btn-success btn-uniform" style="background-color: #2E7D32;">Добавить позицию</a>
@@ -39,11 +39,11 @@
                 <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
                 <td>@Html.DisplayFor(modelItem => item.PriceAtOrder)</td>
                 <td>
-                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
+                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Сотрудник"))
                     {
                         <a asp-action="Edit" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="btn btn-outline-primary btn-sm crud-action-btn">Редактировать</a>
                     }
-                    @if (User.IsInRole("Директор"))
+                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер") || User.IsInRole("Сотрудник"))
                     {
                         <a asp-action="Delete" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="btn btn-outline-danger btn-sm crud-action-btn">Удалить</a>
                     }

@@ -313,7 +313,7 @@ namespace MaintainingOrdersWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Сотрудник,Директор")]
+        [Authorize(Roles = "Директор")]
         public async Task<IActionResult> ConfirmPacked(int id, bool isPacked)
         {
             var order = await _context.Orders.FindAsync(id);

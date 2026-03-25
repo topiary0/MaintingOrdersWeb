@@ -37,14 +37,14 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: DeliveryMethods/Create
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: DeliveryMethods/Create
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MethodId,MethodName,Price,EstimatedTime")] DeliveryMethod deliveryMethod)
@@ -68,7 +68,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: DeliveryMethods/Edit/5
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -80,7 +80,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: DeliveryMethods/Edit/5
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MethodId,MethodName,Price,EstimatedTime")] DeliveryMethod deliveryMethod)
@@ -114,7 +114,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: DeliveryMethods/Delete/5
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -129,7 +129,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // POST: DeliveryMethods/Delete/5
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
