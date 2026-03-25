@@ -46,10 +46,18 @@ namespace MaintainingOrdersWeb.Controllers
             ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Remains <= directorSettings.LowStockThreshold);
 
             var lowStockProducts = await _context.Products
-                .OrderBy(p => p.Remains)
                 .Where(p => p.Remains <= directorSettings.LowStockThreshold)
+                .OrderBy(p => p.Remains)
                 .Take(7)
                 .ToListAsync();
+
+            if (!lowStockProducts.Any())
+            {
+                lowStockProducts = await _context.Products
+                    .OrderBy(p => p.Remains)
+                    .Take(7)
+                    .ToListAsync();
+            }
             ViewBag.LowStockProducts = lowStockProducts;
             ViewBag.LowStockLabels = lowStockProducts.Select(p => p.Name).ToList();
             ViewBag.LowStockCounts = lowStockProducts.Select(p => p.Remains).ToList();

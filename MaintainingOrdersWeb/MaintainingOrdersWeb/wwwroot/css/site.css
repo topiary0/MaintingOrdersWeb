@@ -61,6 +61,12 @@ body {
   transform: translateY(-1px);
 }
 
+.quick-tile-lg {
+  padding: 1.4rem 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
 /* CRUD pages visual refresh */
 main h1 {
   color: #114a9f !important;

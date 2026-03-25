@@ -90,7 +90,7 @@
 
         <div class="row g-2 mb-3">
             <div class="col-md-3"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Заказы к доставке</a></div>
-            <div class="col-md-3"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
+            <div class="col-md-3"><a class="quick-tile quick-tile-lg" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Остатки товаров</a></div>
             <div class="col-md-3"><a class="quick-tile" asp-controller="Clients" asp-action="Index">Контакты клиентов</a></div>
         </div>
@@ -133,7 +133,7 @@
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-title">Поставок</div><div class="metric-value">@ViewBag.ActiveShipmentsCount</div></div></div>
-            <div class="col-md-3"><a class="quick-tile" asp-controller="Reports" asp-action="Index">Сформировать отчет</a></div>
+            <div class="col-md-3"><a class="quick-tile quick-tile-lg" asp-controller="Reports" asp-action="Index">Сформировать отчет</a></div>
         </div>
 
         <div class="chart-wrap">
