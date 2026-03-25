@@ -112,7 +112,9 @@
         <div class="row g-2 mb-3">
             <div class="col-md-4"><div class="metric-card"><div class="metric-title">Низкие остатки</div><div class="metric-value">@ViewBag.LowStockCount</div></div></div>
             <div class="col-md-4"><div class="metric-card"><div class="metric-title">Заказы сегодня</div><div class="metric-value">@ViewBag.TodayOrdersCount</div></div></div>
-            <div class="col-md-4"><a class="quick-tile" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
+            <div class="col-md-4 d-grid">
+                <a class="btn btn-outline-primary btn-uniform h-100 d-flex align-items-center justify-content-center" asp-controller="OrderItems" asp-action="Index">Состав заказов</a>
+            </div>
         </div>
 
         <div class="chart-wrap">

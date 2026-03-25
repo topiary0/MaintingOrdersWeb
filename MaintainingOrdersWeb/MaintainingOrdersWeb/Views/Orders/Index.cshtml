@@ -9,6 +9,13 @@
 
 <h1 style="color: #1976D2;">Заказы</h1>
 
+@if (TempData["DeliveryStatusError"] is string deliveryStatusError && !string.IsNullOrWhiteSpace(deliveryStatusError))
+{
+    <div class="alert alert-warning" role="alert">
+        @deliveryStatusError
+    </div>
+}
+
 <div class="glass-card p-3 mb-3">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
         <div>
@@ -173,6 +180,10 @@
                     {
                         <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-outline-primary btn-sm crud-action-btn">Редактировать</a>
                     }
+                    @if (User.IsInRole("Логист"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-outline-primary btn-sm crud-action-btn">Логистика</a>
+                    }
                     @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
                     {
                         <a asp-action="Delete" asp-route-id="@item.OrderId" class="btn btn-outline-danger btn-sm crud-action-btn">Удалить</a>
@@ -185,6 +196,18 @@
                         <form asp-action="MarkAsPacked" asp-route-id="@item.OrderId" method="post" style="display:inline;">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-sm btn-warning">Собран</button>
+                        </form>
+                    }
+
+                    @if (User.IsInRole("Логист"))
+                    {
+                        <form asp-action="MarkAsDelivered" asp-route-id="@item.OrderId" asp-route-delivered="true" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-success">Доставлен</button>
+                        </form>
+                        <form asp-action="MarkAsDelivered" asp-route-id="@item.OrderId" asp-route-delivered="false" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Не доставлен</button>
                         </form>
                     }
                 </td>

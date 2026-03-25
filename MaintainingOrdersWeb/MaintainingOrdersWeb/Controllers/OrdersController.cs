@@ -187,7 +187,7 @@ namespace MaintainingOrdersWeb.Controllers
         }
 
         // GET: Orders/Edit/5
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -196,16 +196,19 @@ namespace MaintainingOrdersWeb.Controllers
             if (order == null) return NotFound();
 
             ViewData["StatusId"] = new SelectList(_context.OrderStatuses, "StatusId", "StatusName", order.StatusId);
-            ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Name", order.ClientId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", order.UserId);
             ViewData["MethodId"] = new SelectList(_context.DeliveryMethods, "MethodId", "MethodName", order.MethodId);
+            if (!User.IsInRole("Логист"))
+            {
+                ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Name", order.ClientId);
+                ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", order.UserId);
+            }
             return View(order);
         }
 
         // POST: Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Директор,Менеджер")]
+        [Authorize(Roles = "Директор,Менеджер,Логист")]
         public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderDate,StatusId,TotalPrice,DeliveryAddress,ClientId,UserId,MethodId")] Order order)
         {
             if (id != order.OrderId) return NotFound();
@@ -219,6 +222,21 @@ namespace MaintainingOrdersWeb.Controllers
             {
                 try
                 {
+                    if (User.IsInRole("Логист"))
+                    {
+                        var logisticOrder = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+                        if (logisticOrder == null)
+                        {
+                            return NotFound();
+                        }
+
+                        logisticOrder.StatusId = order.StatusId;
+                        logisticOrder.MethodId = order.MethodId;
+                        await _context.SaveChangesAsync();
+                        await RecalculateOrderTotalAsync(logisticOrder.OrderId, preserveManualWhenNoItems: true);
+                        return RedirectToAction(nameof(Index));
+                    }
+
                     var existingOrder = await _context.Orders
                         .AsNoTracking()
                         .FirstOrDefaultAsync(o => o.OrderId == id);
@@ -266,9 +284,12 @@ namespace MaintainingOrdersWeb.Controllers
             }
 
             ViewData["StatusId"] = new SelectList(_context.OrderStatuses, "StatusId", "StatusName", order.StatusId);
-            ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Name", order.ClientId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", order.UserId);
             ViewData["MethodId"] = new SelectList(_context.DeliveryMethods, "MethodId", "MethodName", order.MethodId);
+            if (!User.IsInRole("Логист"))
+            {
+                ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Name", order.ClientId);
+                ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", order.UserId);
+            }
             return View(order);
         }
 
@@ -313,7 +334,7 @@ namespace MaintainingOrdersWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Сотрудник,Директор")]
+        [Authorize(Roles = "Сотрудник")]
         public async Task<IActionResult> MarkAsPacked(int id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -331,6 +352,34 @@ namespace MaintainingOrdersWeb.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Логист")]
+        public async Task<IActionResult> MarkAsDelivered(int id, bool delivered)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var targetStatus = delivered
+                ? await FindStatusByKeywordsAsync("доставлен", "достав", "выдан")
+                : await FindStatusByKeywordsAsync("не доставлен", "отмен", "возврат", "проблем");
+
+            if (targetStatus == null)
+            {
+                TempData["DeliveryStatusError"] = delivered
+                    ? "Не найден статус доставки для подтверждения (например, «Доставлен»)."
+                    : "Не найден статус недоставленного заказа (например, «Не доставлен»).";
+                return RedirectToAction(nameof(Index));
+            }
+
+            order.StatusId = targetStatus.StatusId;
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -367,6 +416,23 @@ namespace MaintainingOrdersWeb.Controllers
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.OrderId == id);
+        }
+
+        private async Task<OrderStatus?> FindStatusByKeywordsAsync(params string[] keywords)
+        {
+            var statuses = await _context.OrderStatuses.ToListAsync();
+            foreach (var keyword in keywords)
+            {
+                var status = statuses.FirstOrDefault(s =>
+                    !string.IsNullOrWhiteSpace(s.StatusName) &&
+                    s.StatusName.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                if (status != null)
+                {
+                    return status;
+                }
+            }
+
+            return null;
         }
 
         private static bool IsCompletedStatus(string? statusName)
