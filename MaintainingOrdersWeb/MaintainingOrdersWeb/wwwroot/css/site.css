@@ -68,13 +68,15 @@ body {
 }
 
 
-.dashboard-panel-action {
-  display: inline-flex;
+
+.quick-tile-equal {
+  height: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 54px;
-  padding: 1rem 1.25rem !important;
-  border-radius: 12px;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 /* CRUD pages visual refresh */
