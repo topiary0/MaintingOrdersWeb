@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+using MaintainingOrdersWeb.Services;
 
 namespace MyWebApp.Controllers
 {
@@ -35,7 +34,7 @@ namespace MyWebApp.Controllers
                 return View();
             }
 
-            string hashedPassword = HashPassword(password);
+            string hashedPassword = PasswordHasher.Hash(password);
 
             var user = await _context.Users
                 .Include(u => u.Role)
@@ -72,17 +71,5 @@ namespace MyWebApp.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
-
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                foreach (byte b in bytes)
-                    builder.Append(b.ToString("x2"));
-                return builder.ToString();
-            }
-        }
-    }
+}
 }

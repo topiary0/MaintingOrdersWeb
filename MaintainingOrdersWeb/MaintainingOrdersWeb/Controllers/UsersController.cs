@@ -57,6 +57,8 @@ namespace MaintainingOrdersWeb.Controllers
                 // Убеждаемся, что UserId не передаётся (он identity)
                 user.UserId = 0; // или можно не назначать, но на всякий случай обнулим
 
+                user.Password = PasswordHasher.Hash(user.Password);
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,7 +104,23 @@ namespace MaintainingOrdersWeb.Controllers
 
             try
             {
-                _context.Update(user);
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                existingUser.FullName = user.FullName;
+                existingUser.Login = user.Login;
+                existingUser.RoleId = user.RoleId;
+
+                if (!string.IsNullOrWhiteSpace(user.Password))
+                {
+                    existingUser.Password = PasswordHasher.IsSha256Hash(user.Password)
+                        ? user.Password
+                        : PasswordHasher.Hash(user.Password);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
