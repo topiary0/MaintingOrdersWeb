@@ -124,9 +124,9 @@ main .table {
   margin-bottom: 0;
 }
 
-main td a.btn,
-main p a.btn,
-main div a.btn {
+main td .btn,
+main p .btn,
+main div .btn {
   margin-right: .35rem;
   margin-bottom: .35rem;
 }
@@ -216,6 +216,16 @@ main table.table tbody td:last-child {
 .delete-confirm-text {
   text-align: center;
   margin-bottom: 1rem;
+}
+
+
+.form-group.mt-3,
+.details-actions,
+.delete-form {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
 }
 
 .delete-form {
