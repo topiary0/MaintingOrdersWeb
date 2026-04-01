@@ -242,14 +242,30 @@ main table.table tbody td:last-child {
   justify-content: center;
 }
 
+/* Unified button sizing across pages */
+main .btn,
 main input[type="submit"],
-main button[type="submit"],
-main a.btn-secondary {
+main button,
+.app-navbar .btn,
+.login-card .btn {
   min-width: 132px;
   min-height: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+main .btn.btn-sm,
+.app-navbar .btn.btn-sm {
+  min-width: 132px;
+  min-height: 38px;
+  padding: .45rem .85rem;
+  font-size: .95rem;
+}
+
+.global-back-btn {
+  min-width: auto !important;
+  min-height: auto !important;
 }
 
 
