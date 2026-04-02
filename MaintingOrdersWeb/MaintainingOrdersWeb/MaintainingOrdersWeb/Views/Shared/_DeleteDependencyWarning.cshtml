@@ -1,0 +1,10 @@
+@{
+    var warningMessage = ViewBag.DependencyWarning as string;
+}
+
+@if (!string.IsNullOrWhiteSpace(warningMessage))
+{
+    <div class="alert alert-warning dependency-alert" role="alert">
+        <strong>Удаление недоступно.</strong> @warningMessage
+    </div>
+}

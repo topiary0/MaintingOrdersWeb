@@ -1,0 +1,46 @@
+﻿@model IEnumerable<MaintainingOrdersWeb.Models.Product>
+
+@{
+    ViewData["Title"] = "Товары";
+}
+
+<h1 style="color: #1976D2;">Товары</h1>
+
+@if (User.IsInRole("Директор"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success" style="background-color: #2E7D32;">Создать новый товар</a>
+    </p>
+}
+<table class="table table-modern">
+    <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Наименование</th>
+            <th>Цена</th>
+            <th>Остаток</th>
+            <th>Поставщик</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Article)</td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                <td>@Html.DisplayFor(modelItem => item.Remains)</td>
+                <td>@Html.DisplayFor(modelItem => item.Suppliers.SupplierName)</td>
+                <td>
+                    @if (User.IsInRole("Директор"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ProductId" class="btn btn-outline-primary btn-sm crud-action-btn">Редактировать</a>
+                        <a asp-action="Delete" asp-route-id="@item.ProductId" class="btn btn-outline-danger btn-sm crud-action-btn">Удалить</a>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.ProductId" class="btn btn-outline-info btn-sm crud-action-btn">Детали</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

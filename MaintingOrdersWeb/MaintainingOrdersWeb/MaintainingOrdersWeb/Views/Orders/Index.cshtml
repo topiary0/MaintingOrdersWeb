@@ -1,0 +1,250 @@
+﻿@model IEnumerable<MaintainingOrdersWeb.Models.Order>
+
+@{
+    ViewData["Title"] = "Заказы";
+    var filterDateValue = ViewBag.FilterOrderDate != null ? ((DateOnly)ViewBag.FilterOrderDate).ToString("yyyy-MM-dd") : string.Empty;
+    var quickSearch = ViewBag.FilterSearch as string ?? string.Empty;
+    var selectedSortOrder = ViewBag.FilterSortOrder as string ?? string.Empty;
+}
+
+<h1 style="color: #1976D2;">Заказы</h1>
+
+<div class="glass-card p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h3 class="mb-1">Фильтры и поиск</h3>
+            <div class="text-muted">Расширенный поиск по заказам, статусам и доставке.</div>
+        </div>
+        <div class="orders-toolbar-actions d-flex gap-2 flex-wrap">
+            <a asp-action="Index" asp-route-orderDate="@DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")" class="btn btn-outline-primary btn-uniform">Сегодня</a>
+            <a asp-action="Index" asp-route-sortOrder="price_desc" class="btn btn-outline-secondary btn-uniform">Сначала дорогие</a>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-uniform">Сброс</a>
+        </div>
+    </div>
+
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label">Номер заказа</label>
+            <input type="number" class="form-control" name="orderId" value="@ViewBag.FilterOrderId" min="1" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Клиент / адрес / статус</label>
+            <input type="text" class="form-control" name="search" value="@quickSearch" placeholder="Например, Иванов или Курьер" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Клиент</label>
+            <select class="form-select" name="clientId">
+                <option value="">Все</option>
+                @foreach (var client in ViewBag.Clients)
+                {
+                    if (ViewBag.FilterClientId != null && (int)ViewBag.FilterClientId == client.ClientId)
+                    {
+                        <option value="@client.ClientId" selected>@client.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@client.ClientId">@client.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Дата</label>
+            <input type="date" class="form-control" name="orderDate" value="@filterDateValue" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Мин. сумма</label>
+            <input type="number" class="form-control" name="minTotal" value="@ViewBag.FilterMinTotal" min="0" step="0.01" placeholder="0.00" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Статус</label>
+            <select class="form-select" name="statusId">
+                <option value="">Все</option>
+                @foreach (var status in ViewBag.Statuses)
+                {
+                    if (ViewBag.FilterStatusId != null && (int)ViewBag.FilterStatusId == status.StatusId)
+                    {
+                        <option value="@status.StatusId" selected>@status.StatusName</option>
+                    }
+                    else
+                    {
+                        <option value="@status.StatusId">@status.StatusName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Способ доставки</label>
+            <select class="form-select" name="methodId">
+                <option value="">Все</option>
+                @foreach (var method in ViewBag.Methods)
+                {
+                    if (ViewBag.FilterMethodId != null && (int)ViewBag.FilterMethodId == method.MethodId)
+                    {
+                        <option value="@method.MethodId" selected>@method.MethodName</option>
+                    }
+                    else
+                    {
+                        <option value="@method.MethodId">@method.MethodName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Сортировка</label>
+            <select class="form-select" name="sortOrder">
+                <option value="" selected="@(string.IsNullOrEmpty(selectedSortOrder))">Сначала новые</option>
+                <option value="date_asc" selected="@(selectedSortOrder == "date_asc")">Сначала старые</option>
+                <option value="price_desc" selected="@(selectedSortOrder == "price_desc")">Сумма по убыванию</option>
+                <option value="price_asc" selected="@(selectedSortOrder == "price_asc")">Сумма по возрастанию</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-uniform">Применить фильтры</button>
+            <button type="button" id="ordersTableSearchClear" class="btn btn-outline-secondary btn-uniform">Очистить быстрый поиск</button>
+        </div>
+    </form>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="metric-card">
+            <div class="metric-title">Найдено заказов</div>
+            <div class="metric-value">@ViewBag.FilteredOrdersCount</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="metric-card">
+            <div class="metric-title">Сумма выборки</div>
+            <div class="metric-value">@(((decimal)ViewBag.FilteredTotalRevenue).ToString("N2")) ₽</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="metric-card">
+            <div class="metric-title">Средний чек</div>
+            <div class="metric-value">@(((decimal)ViewBag.AverageOrderTotal).ToString("N2")) ₽</div>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card p-3 mb-3">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-8">
+            <label class="form-label">Быстрый поиск по таблице</label>
+            <input type="search" id="ordersTableSearch" class="form-control" placeholder="Фильтрация без перезагрузки по номеру, клиенту, статусу, сумме" />
+        </div>
+        <div class="col-md-4">
+            <div class="orders-hint small text-muted">Этот поиск работает мгновенно только по уже загруженной таблице.</div>
+        </div>
+    </div>
+</div>
+
+@if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success btn-uniform" style="background-color: #2E7D32;">Создать новый заказ</a>
+    </p>
+}
+<table class="table table-modern" id="ordersTable">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Дата</th>
+            <th>Клиент</th>
+            <th>Статус</th>
+            <th>Доставка</th>
+            <th>Сумма</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.OrderId</td>
+                <td>@item.OrderDate</td>
+                <td>@item.Client?.Name</td>
+                <td>@item.Status?.StatusName</td>
+                <td>@item.Method?.MethodName</td>
+                <td>@item.TotalPrice</td>
+                <td>
+                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.OrderId" class="btn btn-outline-primary btn-sm crud-action-btn">Редактировать</a>
+                    }
+                    @if (User.IsInRole("Директор") || User.IsInRole("Менеджер"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.OrderId" class="btn btn-outline-danger btn-sm crud-action-btn">Удалить</a>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-outline-info btn-sm crud-action-btn">Детали</a>
+                    <a asp-controller="OrderItems" asp-action="Index" asp-route-orderId="@item.OrderId" class="btn btn-outline-secondary btn-sm crud-action-btn">Состав</a>
+
+                    @if (User.IsInRole("Логист"))
+                    {
+                        <form asp-action="UpdateLogistics" asp-route-id="@item.OrderId" method="post" class="d-flex flex-wrap gap-2 mt-2 align-items-center">
+                            @Html.AntiForgeryToken()
+                            <select name="statusId" class="form-select form-select-sm" style="min-width: 170px;">
+                                @foreach (var status in ViewBag.Statuses)
+                                {
+                                    if (item.StatusId == status.StatusId)
+                                    {
+                                        <option value="@status.StatusId" selected>@status.StatusName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@status.StatusId">@status.StatusName</option>
+                                    }
+                                }
+                            </select>
+                            <select name="methodId" class="form-select form-select-sm" style="min-width: 170px;">
+                                @foreach (var method in ViewBag.Methods)
+                                {
+                                    if (item.MethodId == method.MethodId)
+                                    {
+                                        <option value="@method.MethodId" selected>@method.MethodName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@method.MethodId">@method.MethodName</option>
+                                    }
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary crud-action-btn">Обновить логистику</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        (() => {
+            const searchInput = document.getElementById('ordersTableSearch');
+            const clearButton = document.getElementById('ordersTableSearchClear');
+            const rows = Array.from(document.querySelectorAll('#ordersTable tbody tr'));
+
+            if (!searchInput || !clearButton || rows.length === 0) {
+                return;
+            }
+
+            const applyTableFilter = () => {
+                const query = searchInput.value.trim().toLowerCase();
+
+                rows.forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    row.style.display = !query || text.includes(query) ? '' : 'none';
+                });
+            };
+
+            searchInput.addEventListener('input', applyTableFilter);
+            clearButton.addEventListener('click', () => {
+                searchInput.value = '';
+                applyTableFilter();
+                searchInput.focus();
+            });
+        })();
+    </script>
+}

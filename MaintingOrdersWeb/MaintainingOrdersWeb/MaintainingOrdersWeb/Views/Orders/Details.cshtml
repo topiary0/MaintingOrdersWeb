@@ -1,0 +1,37 @@
+﻿@model MaintainingOrdersWeb.Models.Order
+
+@{
+    ViewData["Title"] = "Детали заказа";
+}
+
+<h1 class="form-page-title">Детали заказа</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Дата заказа</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.OrderDate)</dd>
+
+        <dt class="col-sm-2">Статус</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Status.StatusName)</dd>
+
+        <dt class="col-sm-2">Общая стоимость</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.TotalPrice)</dd>
+
+        <dt class="col-sm-2">Адрес доставки</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.DeliveryAddress)</dd>
+
+        <dt class="col-sm-2">Клиент</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Client.Name)</dd>
+
+        <dt class="col-sm-2">Менеджер</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.User.FullName)</dd>
+
+        <dt class="col-sm-2">Способ доставки</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Method.MethodName)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.OrderId" class="btn btn-primary crud-action-btn" >Редактировать</a>
+    <a asp-action="Index" class="btn btn-secondary btn-uniform">Назад к списку</a>
+</div>

@@ -1,0 +1,76 @@
+﻿@model MaintainingOrdersWeb.Models.Order
+
+@{
+    ViewData["Title"] = "Создать заказ";
+}
+
+<h1 class="form-page-title">Создать заказ</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6 col-lg-5 mx-auto">
+        <form asp-action="Create" id="createOrderForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="OrderDate" class="control-label">Дата заказа</label>
+                <input asp-for="OrderDate" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="OrderDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="StatusId" class="control-label">Статус</label>
+                <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="TotalPrice" class="control-label">Общая стоимость</label>
+                <!-- добавили id="TotalPrice" -->
+                <input asp-for="TotalPrice" class="form-control" step="0.01" lang="en" inputmode="decimal" placeholder="0.00" id="TotalPrice" />
+                <span asp-validation-for="TotalPrice" class="text-danger"></span>
+                <small class="text-muted">Вводите с точкой, например 10120.40</small>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="DeliveryAddress" class="control-label">Адрес доставки</label>
+                <input asp-for="DeliveryAddress" class="form-control" />
+                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="ClientId" class="control-label">Клиент</label>
+                <select asp-for="ClientId" class="form-control" asp-items="ViewBag.ClientId"></select>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="UserId" class="control-label">Менеджер</label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="MethodId" class="control-label">Способ доставки</label>
+                <select asp-for="MethodId" class="form-control" asp-items="ViewBag.MethodId"></select>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Создать" class="btn btn-success" style="background-color: #2E7D32; border-color: #2E7D32;" />
+                <a asp-action="Index" class="btn btn-secondary btn-uniform">Назад к списку</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                var form = document.getElementById('createOrderForm'); // исправлено id
+                if (!form) return;
+                form.addEventListener('submit', function() {
+                    var priceInput = document.getElementById('TotalPrice');
+                    if (priceInput) {
+                        var value = priceInput.value;
+                        if (value && value.indexOf(',') !== -1) {
+                            priceInput.value = value.replace(',', '.');
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+}

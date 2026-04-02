@@ -1,0 +1,46 @@
+﻿@model MaintainingOrdersWeb.Models.Client
+
+@{
+    ViewData["Title"] = "Создать клиента";
+}
+
+<h1 class="form-page-title">Создать клиента</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6 col-lg-5 mx-auto">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="control-label">Наименование</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Address" class="control-label">Адрес</label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Phone" class="control-label">Телефон</label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="ContactPerson" class="control-label">Контактное лицо</label>
+                <input asp-for="ContactPerson" class="form-control" />
+                <span asp-validation-for="ContactPerson" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Создать" class="btn btn-success" style="background-color: #2E7D32; border-color: #2E7D32;" />
+                <a asp-action="Index" class="btn btn-secondary btn-uniform">Назад к списку</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

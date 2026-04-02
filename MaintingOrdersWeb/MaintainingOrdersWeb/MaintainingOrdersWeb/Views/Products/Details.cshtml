@@ -1,0 +1,40 @@
+﻿@model MaintainingOrdersWeb.Models.Product
+
+@{
+    ViewData["Title"] = "Детали товара";
+}
+
+<h1 class="form-page-title">Детали товара</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Артикул</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Article)</dd>
+        <dt class="col-sm-2">Наименование</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+        <dt class="col-sm-2">Цена</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Price)</dd>
+        <dt class="col-sm-2">Описание</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
+        <dt class="col-sm-2">Цена продажи</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.SalePrice)</dd>
+        <dt class="col-sm-2">Закупочная цена</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.PurchasePrice)</dd>
+        <dt class="col-sm-2">Остаток</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Remains)</dd>
+        <dt class="col-sm-2">Вес</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Weight)</dd>
+        <dt class="col-sm-2">Размеры</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Dimensions)</dd>
+        <dt class="col-sm-2">Поставщик</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Suppliers.SupplierName)</dd>
+    </dl>
+</div>
+<div>
+    @if (User.IsInRole("Директор"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.ProductId" class="btn btn-primary crud-action-btn">Редактировать</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary btn-uniform">Назад к списку</a>
+</div>

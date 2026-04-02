@@ -1,0 +1,245 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Главная";
+    var directorSettings = ViewBag.DirectorSettings as MaintainingOrdersWeb.ViewModels.DirectorSettingsViewModel;
+}
+
+<div class="hero-panel mb-4">
+    <h1 class="mb-0">Добро пожаловать, @ViewBag.UserName</h1>
+</div>
+
+@if (User.IsInRole("Директор"))
+{
+    <div class="glass-card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Панель директора</h3>
+            <div class="d-flex gap-2 flex-wrap">
+                <a class="btn btn-sm btn-primary" asp-controller="Reports" asp-action="Index">Отчёты</a>
+                <a class="btn btn-sm btn-outline-primary" asp-controller="Users" asp-action="Index">Пользователи</a>
+                <a class="btn btn-sm btn-outline-secondary" asp-controller="DirectorSettings" asp-action="Index">Настройки</a>
+            </div>
+        </div>
+
+        <div class="row g-2 mb-3">
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов сегодня</div><div class="metric-value">@ViewBag.TodayOrdersCount</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Клиенты</div><div class="metric-value">@ViewBag.TotalClients</div></div></div>
+        </div>
+
+        <div class="row g-2 mb-3">
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Управление заказами</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Shipment" asp-action="Index">Управление поставками</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Clients" asp-action="Index">База клиентов</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Каталог товаров</a></div>
+        </div>
+
+        @if (directorSettings?.ShowStockAlertsOnDashboard == true)
+        {
+            <div class="mini-card mb-3">
+                <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                    <div>
+                        <div class="metric-title">Контроль остатков</div>
+                        <strong>Порог уведомления: @directorSettings.LowStockThreshold ед.</strong>
+                    </div>
+                    <div class="text-muted small">Фокус: @directorSettings.StrategicNotes</div>
+                </div>
+            </div>
+        }
+
+        <div class="chart-wrap mb-3">
+            <canvas id="directorChart"></canvas>
+        </div>
+    </div>
+
+}
+
+@if (User.IsInRole("Менеджер"))
+{
+    <div class="glass-card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Панель менеджера</h3>
+            <div class="d-flex gap-2 flex-wrap">
+                <a class="btn btn-sm btn-primary" asp-controller="Orders" asp-action="Create">Новый заказ</a>
+                <a class="btn btn-sm btn-outline-primary" asp-controller="Shipment" asp-action="Create">Новая поставка</a>
+            </div>
+        </div>
+
+        <div class="row g-2 mb-3">
+            <div class="col-md-2"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Реестр заказов</a></div>
+            <div class="col-md-2"><a class="quick-tile" asp-controller="Clients" asp-action="Create">Добавить клиента</a></div>
+            <div class="col-md-2"><a class="quick-tile" asp-controller="Suppliers" asp-action="Index">Поставщики</a></div>
+            <div class="col-md-2"><a class="quick-tile" asp-controller="OrderStatus" asp-action="Index">Статусы заказов</a></div>
+            <div class="col-md-2"><a class="quick-tile" asp-controller="Shipment" asp-action="Index">Поставки</a></div>
+            <div class="col-md-2"><a class="quick-tile" asp-controller="ShipmentStatus" asp-action="Index">Статусы поставок</a></div>
+        </div>
+
+        <div class="chart-wrap">
+            <canvas id="managerChart"></canvas>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Логист"))
+{
+    <div class="glass-card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Панель логиста</h3>
+            <a class="btn btn-sm btn-outline-primary" asp-controller="DeliveryMethods" asp-action="Index">Способы доставки</a>
+        </div>
+
+        <div class="row g-2 mb-3">
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Orders" asp-action="Index">Заказы к доставке</a></div>
+            <div class="col-md-3"><a class="quick-tile quick-tile-lg" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Products" asp-action="Index">Остатки товаров</a></div>
+            <div class="col-md-3"><a class="quick-tile" asp-controller="Clients" asp-action="Index">Контакты клиентов</a></div>
+        </div>
+
+        <div class="chart-wrap">
+            <canvas id="logisticChart"></canvas>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Сотрудник"))
+{
+    <div class="glass-card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Панель склада</h3>
+            <a class="btn btn-primary" asp-controller="Orders" asp-action="Index">В работу</a>
+        </div>
+
+        <div class="row g-2 mb-3">
+            <div class="col-md-4"><div class="metric-card"><div class="metric-title">Низкие остатки</div><div class="metric-value">@ViewBag.LowStockCount</div></div></div>
+            <div class="col-md-4"><div class="metric-card"><div class="metric-title">Заказы сегодня</div><div class="metric-value">@ViewBag.TodayOrdersCount</div></div></div>
+            <div class="col-md-4"><a class="quick-tile quick-tile-equal" asp-controller="OrderItems" asp-action="Index">Состав заказов</a></div>
+        </div>
+
+        <div class="chart-wrap">
+            <canvas id="employeeChart"></canvas>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Бухгалтер"))
+{
+    <div class="glass-card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Панель бухгалтера</h3>
+            <a class="btn btn-primary" asp-controller="Reports" asp-action="Index">Отчётность и PDF</a>
+        </div>
+
+        <div class="row g-2 mb-3">
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Заказов</div><div class="metric-value">@ViewBag.TotalOrders</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Выручка</div><div class="metric-value">@(ViewBag.TotalRevenue?.ToString("N2") ?? "0.00") ₽</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-title">Поставок</div><div class="metric-value">@ViewBag.ActiveShipmentsCount</div></div></div>
+            <div class="col-md-3"><a class="quick-tile quick-tile-equal" asp-controller="Reports" asp-action="Index">Сформировать отчет</a></div>
+        </div>
+
+        <div class="chart-wrap">
+            <canvas id="accountantChart"></canvas>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const monthLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.MonthLabels));
+        const monthRevenue = @Html.Raw(JsonSerializer.Serialize(ViewBag.MonthRevenue));
+        const monthOrders = @Html.Raw(JsonSerializer.Serialize(ViewBag.MonthOrders));
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } },
+                tooltip: { backgroundColor: '#1F2937' }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkipPadding: 12 } },
+                y: { grid: { color: 'rgba(148,163,184,0.18)' }, beginAtZero: true }
+            }
+        };
+
+        @if (User.IsInRole("Директор"))
+        {
+            <text>
+            new Chart(document.getElementById('directorChart'), {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{ label: 'Выручка, ₽', data: monthRevenue, borderColor: '#1976D2', backgroundColor: 'rgba(25,118,210,0.12)', pointRadius: 2, pointHoverRadius: 4, tension: 0.35, fill: true }]
+                },
+                options: commonOptions
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Менеджер"))
+        {
+            <text>
+            const managerLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.ShipmentStatusLabels));
+            const managerCounts = @Html.Raw(JsonSerializer.Serialize(ViewBag.ShipmentStatusCounts));
+            new Chart(document.getElementById('managerChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: managerLabels,
+                    datasets: [{ data: managerCounts, borderWidth: 1, backgroundColor: ['#1565C0', '#2E7D32', '#F9A825', '#8E24AA', '#EF6C00'] }]
+                },
+                options: commonOptions
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Логист"))
+        {
+            <text>
+            const logisticLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.ManagerStatusLabels));
+            const logisticCounts = @Html.Raw(JsonSerializer.Serialize(ViewBag.ManagerStatusCounts));
+            new Chart(document.getElementById('logisticChart'), {
+                type: 'bar',
+                data: {
+                    labels: logisticLabels,
+                    datasets: [{ label: 'Заказы по статусам', data: logisticCounts, backgroundColor: 'rgba(106,27,154,0.75)', borderRadius: 6, maxBarThickness: 36 }]
+                },
+                options: commonOptions
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Сотрудник"))
+        {
+            <text>
+            const employeeLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.LowStockLabels));
+            const employeeCounts = @Html.Raw(JsonSerializer.Serialize(ViewBag.LowStockCounts));
+            new Chart(document.getElementById('employeeChart'), {
+                type: 'bar',
+                data: {
+                    labels: employeeLabels,
+                    datasets: [{ label: 'Остаток', data: employeeCounts, backgroundColor: 'rgba(239,108,0,0.75)', borderRadius: 6, maxBarThickness: 36 }]
+                },
+                options: commonOptions
+            });
+            </text>
+        }
+
+        @if (User.IsInRole("Бухгалтер"))
+        {
+            <text>
+            new Chart(document.getElementById('accountantChart'), {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        { label: 'Выручка, ₽', data: monthRevenue, backgroundColor: 'rgba(46,125,50,0.75)', borderRadius: 6, maxBarThickness: 28 },
+                        { label: 'Заказы', data: monthOrders, backgroundColor: 'rgba(21,101,192,0.75)', borderRadius: 6, maxBarThickness: 28 }
+                    ]
+                },
+                options: commonOptions
+            });
+            </text>
+        }
+    </script>
+}

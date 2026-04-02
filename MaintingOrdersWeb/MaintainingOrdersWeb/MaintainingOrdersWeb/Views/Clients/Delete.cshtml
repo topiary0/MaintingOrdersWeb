@@ -1,0 +1,36 @@
+﻿@model MaintainingOrdersWeb.Models.Client
+
+@{
+    var canDelete = ViewBag.CanDelete as bool? ?? true;
+    ViewData["Title"] = "Удаление клиента";
+}
+
+<h1 class="form-page-title">Удаление клиента</h1>
+
+<h3 class="delete-confirm-text">Вы уверены, что хотите удалить этого клиента?</h3>
+<div>
+    <partial name="_DeleteDependencyWarning" />
+    <dl class="row">
+        <dt class="col-sm-2">Наименование</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+        <dt class="col-sm-2">Адрес</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Address)</dd>
+        <dt class="col-sm-2">Телефон</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Phone)</dd>
+        <dt class="col-sm-2">Контактное лицо</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.ContactPerson)</dd>
+    </dl>
+
+    <form asp-action="Delete" class="delete-form">
+        <input type="hidden" asp-for="ClientId" />
+        @if (canDelete)
+        {
+            <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn btn-uniform" />
+        }
+        else
+        {
+            <button type="button" class="btn btn-warning delete-submit-btn btn-uniform" disabled>Удаление недоступно</button>
+        }
+        <a asp-action="Index" class="btn btn-secondary btn-uniform">Отмена</a>
+    </form>
+</div>

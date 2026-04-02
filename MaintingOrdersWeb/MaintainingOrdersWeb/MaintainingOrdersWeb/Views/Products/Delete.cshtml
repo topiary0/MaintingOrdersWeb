@@ -1,0 +1,48 @@
+﻿@model MaintainingOrdersWeb.Models.Product
+
+@{
+    var canDelete = ViewBag.CanDelete as bool? ?? true;
+    ViewData["Title"] = "Удаление товара";
+}
+
+<h1 class="form-page-title">Удаление товара</h1>
+
+<h3 class="delete-confirm-text">Вы уверены, что хотите удалить этот товар?</h3>
+<div>
+    <partial name="_DeleteDependencyWarning" />
+    <dl class="row">
+        <dt class="col-sm-2">Артикул</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Article)</dd>
+        <dt class="col-sm-2">Наименование</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+        <dt class="col-sm-2">Цена</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Price)</dd>
+        <dt class="col-sm-2">Описание</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
+        <dt class="col-sm-2">Цена продажи</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.SalePrice)</dd>
+        <dt class="col-sm-2">Закупочная цена</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.PurchasePrice)</dd>
+        <dt class="col-sm-2">Остаток</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Remains)</dd>
+        <dt class="col-sm-2">Вес</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Weight)</dd>
+        <dt class="col-sm-2">Размеры</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Dimensions)</dd>
+        <dt class="col-sm-2">Поставщик</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Suppliers.SupplierName)</dd>
+    </dl>
+
+    <form asp-action="Delete" class="delete-form">
+        <input type="hidden" asp-for="ProductId" />
+        @if (canDelete)
+        {
+            <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn btn-uniform" />
+        }
+        else
+        {
+            <button type="button" class="btn btn-warning delete-submit-btn btn-uniform" disabled>Удаление недоступно</button>
+        }
+        <a asp-action="Index" class="btn btn-secondary btn-uniform">Отмена</a>
+    </form>
+</div>

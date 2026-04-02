@@ -1,0 +1,26 @@
+﻿@model MaintainingOrdersWeb.Models.SupplyItem
+
+@{
+    ViewData["Title"] = "Удаление элемента поставки";
+}
+
+<h1 class="form-page-title">Удаление элемента поставки</h1>
+
+<h3 class="delete-confirm-text">Вы уверены, что хотите удалить этот элемент?</h3>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Поставка (ID)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.ShipmentId)</dd>
+        <dt class="col-sm-2">Товар</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Product.Name)</dd>
+        <dt class="col-sm-2">Количество</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Quantity)</dd>
+        <dt class="col-sm-2">Цена в поставке</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.PriceAtShipment)</dd>
+    </dl>
+
+    <form asp-action="Delete" asp-route-shipmentId="@Model.ShipmentId" asp-route-productId="@Model.ProductId" class="delete-form">
+        <input type="submit" value="Удалить" class="btn btn-danger delete-submit-btn btn-uniform" />
+        <a asp-action="Index" class="btn btn-secondary btn-uniform">Отмена</a>
+    </form>
+</div>
